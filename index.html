@@ -1,16 +1,114 @@
 <!DOCTYPE html>
 <html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Книга процессов</title>
+    <style>
+    
+    body {
+        font-family: tahoma, Arial;
+        font-size: 15px;
+        color: #000;
+        background-color: #fff;
+        margin: 0px;
+        padding: 0px;
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>Книга процессов</title>
-</head>
+      .header {
+        background-color: #f7f7ff;
+        padding: 10px;
+        text-align: center;
+      }
 
-<body>
-  <header class="header'>
-      Книга процессов. Направление партнерских КЦ.
+      .heading {
+        font-size: 17px;
+
+      }
+
+      .main {
+        display: grid;
+        grid-template-columns: 2fr 5fr;
+        grid-column-gap: 5px;
+      } 
+
+      .aside {
+        background-color: #f1f1f1;
+      }
+
+      .list {
+        list-style: none;
+      }
+
+      .list__item_text {
+        font-weight: 400;
+        padding: 5px;
+        border-radius: 5px;
+      }
+
+      .list__item_text:hover,
+      .list__item_text:focus {
+        cursor: pointer;
+      }
+
+      .list__item_text:active {
+        opacity: 0.5;
+      }
+
+      .active {
+        font-weight: 600;
+        background-color: #c7c7c7;
+      }
+
+      .unfolded:after {
+        content: '-';
+        font-weight: 400;
+        margin-left: 30px;
+      }
+    </style>
+  </head>
+
+  <body>
+    
+    <header class="header">
+      <h1 class='heading'>
+        Книга процессов. Направление партнерских КЦ.
+      </h1>
     </header>
+
+    <main class="main">
+      <aside class="aside">
+        <ul class="list level1-list">
+          <li class="level1-list__item">
+            <h2 class="level1-list__heading unfolded list__item_text">1.0 Тематика</h2>       
+            <ul class="list level2-list">
+              <li class="list__item level2-list__item">
+                <h3 class="level2-list__heading active list__item_text">1.1 Запуск колл центра</h2>
+                <ul class="list level3-list">
+                  <li class="list__item level3-list__item"><h4 class="list__item_text">1.1.1 Запись вебинара по подбору</h4></li>
+                  <li class="list__item level3-list__item">
+                    <h4 class="list__item_text">1.1.2 Построение подбора</h4>
+                    <ul class="list level4-list">
+                      <li class="list__item level4-list__item"><h4 class="list__item_text">1.1.2.1 Общее описание</h4></li>
+                      <li class="list__item level4-list__item"><h4 class="list__item_text">1.1.2.2 Кто занимается подбором</h4></li>
+                      <li class="list__item level4-list__item"><h4 class="list__item_text">1.1.2.3 Инструменты подбора</h4></li>
+                      <li class="list__item level4-list__item"><h4 class="list__item_text">1.1.2.4 Рекомендации к поиску</h4></li>
+                    </ol>
+                  </li>
+                </ol>
+              </li>
+              <li class="level2-list__item"></li>
+            </ol>
+          </li>
+          <li class="level1-list__item"></li>
+        </ol>
+      </aside>
+      <section class="content"></section>
+    </main>
+    
+    <script>
+    
+    </script>
   </body>
 </html>
