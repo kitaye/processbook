@@ -8,15 +8,14 @@ const editableElementsArray = [].slice.call(editableElements);
 const maxId = statefulIdArray.reduce((acc, current) => current > acc ? current: acc, 0);
 
 const makeCounter = () => {
-  let counter = maxId + 1;
+  let counter = maxId;
   return () => counter += 1
 }
 
 const getUniqueId = makeCounter();
 
-
 const foldElement = element => {
-  if(element.parentNode.childElementCount === 1) {
+  if(element.parentNode.childElementCount === 4) {
     return;
   }
   element.classList.toggle('folded');
@@ -43,11 +42,9 @@ const makeEditable = element => {
   });
 }
 
+const setupSidebarNavigation = () => statefulElementsArray.forEach(element => element.addEventListener('click', event => event.detail === 1? handleOnClickElement(event.target): makeEditable(event.target)));
 
-
-const setupSidebarNavigation = () => statefulElementsArray.forEach(element => element.addEventListener('click', event => event.detail === 1? handleOnClickElement(event.target): false));
-
-const setupEditableElements = () => editableElementsArray.forEach(element => element.addEventListener('dblclick', event => makeEditable(event.target)));
+// const setupEditableElements = () => editableElementsArray.forEach(element => element.addEventListener('dblclick', event => makeEditable(event.target)));
 
 setupSidebarNavigation();
-setupEditableElements();
+// setupEditableElements();
