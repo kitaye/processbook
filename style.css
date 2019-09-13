@@ -72,17 +72,17 @@ ol {
 }
 
 .visually-hidden {
-  position: absolute;
-  clip: rect(0 0 0 0);
-  width: 1px;
-  height: 1px;
-  margin: -1px;
+  display: none;
 }
 
 .button {
   position: absolute;
-  top: 10px;
+  top: 5px;
   left: 0;
+  width: 15px;
+  height: 15px;
+  text-align: center;
+  font-size: 17px;
   background-color: inherit;
   padding: 0;
   border: none;
@@ -97,8 +97,8 @@ ol {
 }
 
 .button:hover {
-  cursor: pointer;
-  opacity: 0.6;
+  font-size: 20px;
+  /* cursor: pointer; */
 }
 
 .button:active {
