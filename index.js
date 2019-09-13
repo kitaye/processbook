@@ -1,6 +1,19 @@
 
 const statefulElements = document.getElementsByClassName('list__item_text');
-const statefulArray = [].slice.call(statefulElements);
+const statefulElementsArray = [].slice.call(statefulElements);
+const statefulIdArray = statefulElementsArray.map(element => element.parentNode.id);
+const editableElements = document.getElementsByClassName('editable');
+const editableElementsArray = [].slice.call(editableElements);
+
+const maxId = statefulIdArray.reduce((acc, current) => current > acc ? current: acc, 0);
+
+const makeCounter = () => {
+  let counter = maxId + 1;
+  return () => counter += 1
+}
+
+const getUniqueId = makeCounter();
+
 
 const foldElement = element => {
   if(element.parentNode.childElementCount === 1) {
@@ -16,11 +29,25 @@ const setActiveElement = element => {
   element.classList.toggle('active');
 }
 
-const elementOnClick = element => {
+const handleOnClickElement = element => {
   setActiveElement(element);
   foldElement(element);
 }
 
+const makeEditable = element => {
+  element.contentEditable = true;
+  element.style.cursor = 'auto';
+  element.addEventListener('blur', event => {
+    event.target.contentEditable = false
+    event.target.style.cursor = 'pointer';
+  });
+}
 
-statefulArray.forEach(element => element.addEventListener('click', event => elementOnClick(event.target)));
 
+
+const setupSidebarNavigation = () => statefulElementsArray.forEach(element => element.addEventListener('click', event => event.detail === 1? handleOnClickElement(event.target): false));
+
+const setupEditableElements = () => editableElementsArray.forEach(element => element.addEventListener('dblclick', event => makeEditable(event.target)));
+
+setupSidebarNavigation();
+setupEditableElements();

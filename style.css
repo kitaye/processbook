@@ -6,6 +6,15 @@ body {
   min-height: 100vh;
 }
 
+ol {
+  counter-reset: item;
+}
+
+.list__item_text:before {
+  content: counters(item, '.') ' ';
+  counter-increment: item;
+}
+
 .header {
   background-color: #f7f7ff;
   padding: 10px;
@@ -50,7 +59,7 @@ body {
 }
 
 .folded {
-    background-color: #c1c1c1;
+  background-color: #c1c1c1;
 }
 
 .visually-hidden {
