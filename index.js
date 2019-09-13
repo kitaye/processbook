@@ -1,8 +1,12 @@
 const statefulElements = document.getElementsByClassName('list__item_text');
-const statefulElementsArray = [].slice.call(statefulElements);
+const statefulElementsArray = [... statefulElements];
 const statefulIdArray = statefulElementsArray.map(element => element.parentNode.id);
 const editableElements = document.getElementsByClassName('editable');
-const editableElementsArray = [].slice.call(editableElements);
+const editableElementsArray = [... editableElements];
+const buttons = document.getElementsByClassName('button');
+const buttonsDeleteArray = [... buttons].filter(element => element.classList.contains('button-delete'));
+const buttonsAddArray = [... buttons].filter(element => element.classList.contains('button-add'));
+const buttonEditArray = [... buttons].filter(element => element.classList.contains('button-edit'));
 
 const maxId = statefulIdArray.reduce((acc, current) => current > acc ? current: acc, 0);
 
@@ -36,7 +40,7 @@ const handleOnClickElement = element => {
 }
 
 const handleMouseOverElement = element => {
-  const siblingsArray = [].slice.call(element.parentNode.children);
+  const siblingsArray = [... element.parentNode.children];
   const buttonsArray = siblingsArray.filter(element => element.classList.contains('button'));
   buttonsArray.forEach(element => element.classList.remove('visually-hidden'));
   console.log('BUTTONS: ' + buttonsArray);
@@ -44,3 +48,11 @@ const handleMouseOverElement = element => {
 }
 
 statefulElementsArray.forEach(element => element.addEventListener('mouseover', event => handleMouseOverElement(event.target)));
+
+const deleteSidebarElement = element => {
+  console.log(element.parentNode);
+  element.parentNode.remove();
+}
+
+buttonsDeleteArray.forEach(element => element.addEventListener('click', event => deleteSidebarElement(event.target)));
+
