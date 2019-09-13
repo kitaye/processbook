@@ -15,7 +15,6 @@ ol {
 }
 
 .list__item {
-  padding-left: 60px;
   position: relative;
 }
 
@@ -52,6 +51,7 @@ ol {
   font-weight: 400;
   padding: 5px;
   border-radius: 5px;
+  padding-left: 60px;
 }
 
 .list__item:hover,
