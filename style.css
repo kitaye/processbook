@@ -10,6 +10,14 @@ ol {
   counter-reset: item;
 }
 
+.level1-list {
+  padding-left: 0;
+}
+
+.list__item {
+  position: relative;
+}
+
 .list__item_text:before {
   content: counters(item, '.') ' ';
   counter-increment: item;
@@ -43,6 +51,7 @@ ol {
   font-weight: 400;
   padding: 5px;
   border-radius: 5px;
+  padding-left: 60px;
 }
 
 .list__item:hover,
@@ -68,4 +77,30 @@ ol {
   width: 1px;
   height: 1px;
   margin: -1px;
+}
+
+.button {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  background-color: inherit;
+  padding: 0;
+  border: none;
+}
+
+.button-delete {
+  left: 20px;
+}
+
+.button-edit {
+  left: 40px;
+}
+
+.button:hover {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.button:active {
+  opacity: 0.2;
 }
