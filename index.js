@@ -49,43 +49,37 @@ const handleOnClickElement = element => {
   foldElement(element);
 }
 
-// const handleMouseOverElement = element => {
-//   const buttonsArray = siblingsArray(element).filter(element => element.classList.contains('button'));
-//   buttonsArray.forEach(element => element.classList.remove('visually-hidden'));
-//   console.log('BUTTONS: ' + buttonsArray);
-//   element.addEventListener('mouseout', () => buttonsArray.forEach(element => element.classList.add('visually-hidden')));
-// }
-
-// statefulElementsArray.forEach(element => element.addEventListener('mouseover', event => handleMouseOverElement(event.target)));
-
 const deleteSidebarElement = element => {
-  console.log(element.parentNode);
   element.parentNode.remove();
 }
 
 const makeElementEditable = element => {
   const setEditPossibility = isPossible => {
-    if(isPossible === true) {
+    if(isPossible) {
       element.contentEditable = true;
       element.focus();
+      return;
     }
-    element.contentEditable = 'false';
-    // element.style.cursor = element.classList.contains('list__item_text') ? 'pointer': 'auto';
+    element.contentEditable = false;
+    element.style.cursor = element.classList.contains('list__item_text') ? 'pointer': 'auto';
+    
   }
-  
-  setEditPossibility(true);
-  element.addEventListener('blur', () => setEditPossibility('false'));
+    setEditPossibility(true);
+    element.onblur = () => setEditPossibility(false);
+    element.onkeydown = event => {
+      if(event.keyCode === 13) {
+        setEditPossibility(false);
+      }
+    } 
 }
 
 const makeElementsEditableOnButtonClick = buttons => {
   const editableElement = button => siblingsArray(button).find(element => element.classList.contains('editable'));
   buttons.forEach(button => button.onclick = event => {
-    console.log('EDITABLE ELEMENT: ' + editableElement(event.target));
     makeElementEditable(editableElement(event.target))
   });
 }
 
-console.log(buttonsEditArray);
 makeElementsEditableOnButtonClick(buttonsEditArray);
 buttonsDeleteArray.forEach(button => button.onclick = () => deleteSidebarElement(event.target));
 
