@@ -30,7 +30,8 @@ const makeCounter = () => {
 
 const getMenuElementContentId = menuElement => `${menuElement.parentNode.id}_content`;
 
-const getUniqueId = makeCounter();
+const makeId = makeCounter();
+const makeContentId = id => `${id}_content`;
 
 const foldElement = element => {
   if (element.parentNode.childElementCount === 4) {
@@ -126,7 +127,56 @@ const makeElementsEditableOnButtonClick = buttons => {
   );
 };
 
+const makeMenuElementChild = parent => {
+  const newListItemData = {
+    tag: 'li',
+    class: 'level__list_item list__item',
+    id: makeId()
+  }
+
+  const buttonClassNames = ['button-add button', 'button-delete button', 'button-edit button'];
+  
+  const newButtonData = buttonClassName => ({
+      tag: 'button',
+      class: `button ${buttonClassName}`
+  })
+
+  const newButtonsData = buttonClassNames.map(className => newButtonData(className));
+
+  const newElementListLevel = () => {
+    if(parent.classList.contains('level1-list')) {
+      return 1;
+    } else if(parent.classList.contains('level2-list')) {
+      return 2;
+    } 
+    return 3;
+  }
+
+  const newHeadingData = {
+    tag: `h${newElementListLevel() + 1}`,
+    class: `level${newElementListLevel()}-list__heading list__item_text editable`
+  }
+
+
+  const makeElement = elementData => {
+    newElement = document.createElement(elementData.tag);
+    if(elementData.id) {
+      newElement.setAttribute('id', newElement.id);
+    }
+    newElement.setAttribute('class', elementData.class)
+    return newElement;
+  };
+
+  const newListItem = makeElement(newListItemData);
+  const newHeading = makeElement(newHeadingData);
+  const newButtons = newButtonsData.map(buttonData => makeElement(buttonData));
+
+  parent.appendChild(newListItem);
+  newButtons.forEach(button => newListItem.appendChild(button));
+  newListItem.appendChild(newHeading);
+}
+  
+
 makeElementsEditableOnButtonClick(buttonsEditArray);
-buttonsDeleteArray.forEach(
-  button => (button.onclick = () => deleteSidebarElement(event.target))
-);
+buttonsDeleteArray.forEach(button => button.onclick = () => deleteSidebarElement(event.target));
+buttonsAddArray.forEach(button => button.onclick = () => makeMenuElementChild(event.target.parentNode));
