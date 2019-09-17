@@ -6,17 +6,8 @@ const statefulIdArray = statefulElementsArray.map(
 const editableElements = document.getElementsByClassName('editable');
 const editableElementsArray = [...editableElements];
 const buttons = document.getElementsByClassName('button');
-const buttonsDeleteArray = [...buttons].filter(element =>
-  element.classList.contains('button-delete')
-);
-const buttonsAddArray = [...buttons].filter(element =>
-  element.classList.contains('button-add')
-);
-const buttonsEditArray = [...buttons].filter(element =>
-  element.classList.contains('button-edit')
-);
-const siblingsArray = element => [...element.parentNode.children];
 
+const siblingsArray = element => [...element.parentNode.children];
 
 const maxId = statefulIdArray.reduce(
   (acc, current) => (current > acc ? current : acc),
@@ -25,10 +16,11 @@ const maxId = statefulIdArray.reduce(
 
 const makeCounter = () => {
   let counter = maxId;
-  return () => (counter += 1);
+  return () => (counter = Number(counter) + 1);
 };
 
-const getMenuElementContentId = menuElement => `${menuElement.parentNode.id}_content`;
+const getMenuElementContentId = menuElement =>
+  `${menuElement.parentNode.id}_content`;
 
 const makeId = makeCounter();
 const makeContentId = id => `${id}_content`;
@@ -64,19 +56,17 @@ const setActiveMenuElement = element => {
 
 const setActiveContent = currentMenuElement => {
   const activeMenuElement = document.querySelector('.active.list__item_text');
-  const activeMenuElementContent = document.getElementById(getMenuElementContentId(activeMenuElement));
-  const currentMenuElementContent = document.getElementById(getMenuElementContentId(currentMenuElement));
-  console.log('ACTIVE MENU ELEMENT CONTENT ID: ' + getMenuElementContentId(activeMenuElement));
-  console.log('activemenuelement: ' + activeMenuElement);
-  console.log('currentmenuelement: ' + currentMenuElement);
-  console.log('currentmenuelementID: ' + currentMenuElement.parentNode.id);
-  console.log('activemenuelementID: ' + activeMenuElement.id);
-  console.log('ID: ' + getMenuElementContentId(currentMenuElement));
-  console.log('ACTIVE ID: ' + getMenuElementContentId(activeMenuElement));
+  const activeMenuElementContent =
+    activeMenuElement &&
+    document.getElementById(getMenuElementContentId(activeMenuElement));
+  const currentMenuElementContent = document.getElementById(
+    getMenuElementContentId(currentMenuElement)
+  );
 
-  activeMenuElementContent.classList.add('visually-hidden');
+  activeMenuElement &&
+    activeMenuElementContent.classList.add('visually-hidden');
   currentMenuElementContent.classList.remove('visually-hidden');
-}
+};
 
 const setupSidebarNavigation = () =>
   statefulElementsArray.forEach(element =>
@@ -112,7 +102,8 @@ const makeElementEditable = element => {
   };
   setEditPossibility(true);
   element.onblur = () => setEditPossibility(false);
-  element.onkeydown = event => event.keyCode === 13 && setEditPossibility(false);
+  element.onkeydown = event =>
+    event.keyCode === 13 && setEditPossibility(false);
 };
 
 const makeElementsEditableOnButtonClick = buttons => {
@@ -127,56 +118,123 @@ const makeElementsEditableOnButtonClick = buttons => {
   );
 };
 
-const makeMenuElementChild = parent => {
+const setButtonsOnClickEvents = () => {
+  const buttonsDeleteArray = [...buttons].filter(element =>
+    element.classList.contains('button-delete')
+  );
+  const buttonsAddArray = [...buttons].filter(element =>
+    element.classList.contains('button-add')
+  );
+  const buttonsEditArray = [...buttons].filter(element =>
+    element.classList.contains('button-edit')
+  );
+  
+  makeElementsEditableOnButtonClick(buttonsEditArray);
+  buttonsDeleteArray.forEach(
+    button => (button.onclick = event => deleteSidebarElement(event.target))
+  );
+  buttonsAddArray.forEach(
+    button =>
+      (button.onclick = event => {
+        const newChildren = makeMenuElementChildren(event.target.parentNode);
+        appendNewElementChildren(event.target.parentNode, newChildren);
+      })
+  );
+};
+
+setButtonsOnClickEvents();
+
+const hasOlChildren = element =>
+  [...element.children].includes(child => child.tag === 'ol');
+
+const makeMenuElementChildren = parent => {
   const newListItemData = {
     tag: 'li',
     class: 'level__list_item list__item',
-    id: makeId()
-  }
+    content: ''
+  };
 
-  const buttonClassNames = ['button-add button', 'button-delete button', 'button-edit button'];
-  
-  const newButtonData = buttonClassName => ({
+  const newButtonsData = [
+    {
       tag: 'button',
-      class: `button ${buttonClassName}`
-  })
-
-  const newButtonsData = buttonClassNames.map(className => newButtonData(className));
+      class: 'button button-add',
+      content: '+'
+    },
+    {
+      tag: 'button',
+      class: 'button button-delete',
+      content: '✕'
+    },
+    {
+      tag: 'button',
+      class: 'button button-edit',
+      content: '✎'
+    }
+  ];
 
   const newElementListLevel = () => {
-    if(parent.classList.contains('level1-list')) {
+    if (parent.classList.contains('level1-list')) {
       return 1;
-    } else if(parent.classList.contains('level2-list')) {
+    } else if (parent.classList.contains('level2-list')) {
       return 2;
-    } 
+    }
     return 3;
-  }
+  };
 
   const newHeadingData = {
     tag: `h${newElementListLevel() + 1}`,
-    class: `level${newElementListLevel()}-list__heading list__item_text editable`
-  }
+    class: `level${newElementListLevel()}-list__heading list__item_text editable`,
+    content: ''
+  };
 
+  const newOlData = {
+    tag: 'ol',
+    class: `list level${newElementListLevel()}-list`,
+    content: ''
+  };
 
   const makeElement = elementData => {
     newElement = document.createElement(elementData.tag);
-    if(elementData.id) {
-      newElement.setAttribute('id', newElement.id);
+    if (elementData.tag === 'li') {
+      newElement.setAttribute('id', makeId());
     }
-    newElement.setAttribute('class', elementData.class)
+    newElement.setAttribute('class', elementData.class);
+    newElement.innerHTML = elementData.content;
+    if(newElement.tag === 'h2' || newElement.tag ) {
+      newElement.setAttribute('contenteditable', true);
+      newElement.setAttribute('placeholder', '...');
+    }
+
     return newElement;
   };
 
+  const newOl = !hasOlChildren(parent) && makeElement(newOlData);
   const newListItem = makeElement(newListItemData);
   const newHeading = makeElement(newHeadingData);
   const newButtons = newButtonsData.map(buttonData => makeElement(buttonData));
 
-  parent.appendChild(newListItem);
-  newButtons.forEach(button => newListItem.appendChild(button));
-  newListItem.appendChild(newHeading);
-}
-  
+  return {
+    ol: !hasOlChildren(parent) && newOl,
+    li: newListItem,
+    heading: newHeading,
+    buttons: newButtons
+  };
+};
 
-makeElementsEditableOnButtonClick(buttonsEditArray);
-buttonsDeleteArray.forEach(button => button.onclick = () => deleteSidebarElement(event.target));
-buttonsAddArray.forEach(button => button.onclick = () => makeMenuElementChild(event.target.parentNode));
+const appendNewElementChildren = (parent, newChildren) => {
+  const existingOl = [...parent.children].find(child =>
+    child.classList.contains('list')
+  );
+  const ol = hasOlChildren(parent) ? existingOl : newChildren.ol;
+  const li = ol.appendChild(newChildren.li);
+  newChildren.buttons.forEach(button => li.appendChild(button));
+  li.appendChild(newChildren.heading);
+  ol.appendChild(li);
+  if (!hasOlChildren(parent)) {
+    parent.appendChild(ol);
+  }
+  setButtonsOnClickEvents();
+  newChildren.heading.focus();
+  setActiveMenuElement(newChildren.heading);
+  makeElementEditable(newChildren.heading);
+};
