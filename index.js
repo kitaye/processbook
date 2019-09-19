@@ -25,7 +25,7 @@ const toggleFoldedState = element => {
   if (element.parentNode.childElementCount === 4) {
     return;
   }
-  element.classList.toggle('folded');
+  element.classList.toggle('unfolded');
   element.parentNode.lastElementChild.classList.toggle('visually-hidden');
 };
 
@@ -116,26 +116,27 @@ const setButtonsOnClickEvents = () => {
     element.classList.contains('button-delete')
   );
   const buttonsAddArray = [...buttons].filter(element =>
-    element.classList.contains('button-add')
+    element.classList.contains('button-add') || element.classList.contains('button-add-child')
   );
   const buttonsEditArray = [...buttons].filter(element =>
     element.classList.contains('button-edit')
   );
-  
+
   makeElementsEditableOnButtonClick(buttonsEditArray);
   buttonsDeleteArray.forEach(
     button => (button.onclick = event => deleteSidebarElement(event.target))
   );
+
   buttonsAddArray.forEach(
     button =>
       (button.onclick = event => {
-        const parent = event.target.parentNode;
+        const parent = event.target.classList.contains('button-add-child') ? event.target.parentNode: event.target.parentNode.parentNode.parentNode;
         const newChildren = makeMenuElement(parent);
         const heading = [... parent.children].find(element => element.classList.contains('list__item_text'))
         appendNewElement(parent, newChildren);
         const newContent = makeContent(newChildren.li);
         appendContent(newContent);
-        heading.classList.contains('folded') && toggleFoldedState(heading)
+        heading && !heading.classList.contains('unfolded') && toggleFoldedState(heading)
         setupSidebarNavigation();
         setActiveMenuElement(newChildren.heading);
         makeElementEditable(newChildren.heading);
