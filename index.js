@@ -1,16 +1,12 @@
 const statefulElements = document.getElementsByClassName('list__item_text');
-const statefulElementsArray = [...statefulElements];
-const statefulIdArray = statefulElementsArray.map(
-  element => element.parentNode.id
-);
 const editableElements = document.getElementsByClassName('editable');
-const editableElementsArray = [...editableElements];
 const buttons = document.getElementsByClassName('button');
+const hasTagChildren = (element, tag) => [...element.children].map(element => element.tagName.toLowerCase()).includes(tag);
 
 const siblingsArray = element => [...element.parentNode.children];
 
-const maxId = statefulIdArray.reduce(
-  (acc, current) => (current > acc ? current : acc),
+const maxId = [...statefulElements].reduce(
+  (acc, current) => (Number(current.parentNode.id) > acc ? Number(current.parentNode.id) : acc),
   0
 );
 
@@ -25,7 +21,7 @@ const getMenuElementContentId = menuElement =>
 const makeId = makeCounter();
 const makeContentId = id => `${id}_content`;
 
-const foldElement = element => {
+const toggleFoldedState = element => {
   if (element.parentNode.childElementCount === 4) {
     return;
   }
@@ -69,19 +65,13 @@ const setActiveContent = currentMenuElement => {
 };
 
 const setupSidebarNavigation = () =>
-  statefulElementsArray.forEach(element =>
-    element.addEventListener('click', event =>
-      event.detail === 1
-        ? handleOnClickElement(event.target)
-        : makeEditable(event.target)
-    )
-  );
+  [... statefulElements].forEach(element => element.onclick = () => handleOnClickElement(event.target));
 
 setupSidebarNavigation();
 const handleOnClickElement = element => {
   setActiveContent(element);
   setActiveMenuElement(element);
-  foldElement(element);
+  toggleFoldedState(element);
 };
 
 const deleteSidebarElement = element => {
@@ -102,8 +92,11 @@ const makeElementEditable = element => {
   };
   setEditPossibility(true);
   element.onblur = () => setEditPossibility(false);
-  element.onkeydown = event =>
-    event.keyCode === 13 && setEditPossibility(false);
+  element.onkeydown = event => {
+    if(event.keyCode === 13) { 
+      setEditPossibility(false);
+    }
+  }
 };
 
 const makeElementsEditableOnButtonClick = buttons => {
@@ -136,21 +129,37 @@ const setButtonsOnClickEvents = () => {
   buttonsAddArray.forEach(
     button =>
       (button.onclick = event => {
-        const newChildren = makeMenuElementChildren(event.target.parentNode);
-        appendNewElementChildren(event.target.parentNode, newChildren);
+        const parent = event.target.parentNode;
+        const newChildren = makeMenuElement(parent);
+        const heading = [... parent.children].find(element => element.classList.contains('list__item_text'))
+        appendNewElement(parent, newChildren);
+        const newContent = makeContent(newChildren.li);
+        appendContent(newContent);
+        heading.classList.contains('folded') && toggleFoldedState(heading)
+        setupSidebarNavigation();
+        setActiveMenuElement(newChildren.heading);
+        makeElementEditable(newChildren.heading);
       })
   );
 };
 
 setButtonsOnClickEvents();
 
-const hasOlChildren = element =>
-  [...element.children].includes(child => child.tag === 'ol');
 
-const makeMenuElementChildren = parent => {
+
+const makeMenuElement = parent => {
+  const newElementListLevel = () => {
+    if (parent.classList.contains('level1-list')) {
+      return 1;
+    } else if (parent.classList.contains('level2-list')) {
+      return 2;
+    }
+    return 3;
+  };
+  
   const newListItemData = {
     tag: 'li',
-    class: 'level__list_item list__item',
+    class: `level${newElementListLevel()}__list_item list__item`,
     content: ''
   };
 
@@ -171,15 +180,7 @@ const makeMenuElementChildren = parent => {
       content: '✎'
     }
   ];
-
-  const newElementListLevel = () => {
-    if (parent.classList.contains('level1-list')) {
-      return 1;
-    } else if (parent.classList.contains('level2-list')) {
-      return 2;
-    }
-    return 3;
-  };
+  
 
   const newHeadingData = {
     tag: `h${newElementListLevel() + 1}`,
@@ -208,33 +209,40 @@ const makeMenuElementChildren = parent => {
     return newElement;
   };
 
-  const newOl = !hasOlChildren(parent) && makeElement(newOlData);
+  const newOl = !hasTagChildren(parent, 'ol') && makeElement(newOlData);
   const newListItem = makeElement(newListItemData);
   const newHeading = makeElement(newHeadingData);
   const newButtons = newButtonsData.map(buttonData => makeElement(buttonData));
 
   return {
-    ol: !hasOlChildren(parent) && newOl,
+    ol: !hasTagChildren(parent, 'ol') && newOl,
     li: newListItem,
     heading: newHeading,
     buttons: newButtons
   };
 };
 
-const appendNewElementChildren = (parent, newChildren) => {
+const appendNewElement = (parent, newChildren) => {
   const existingOl = [...parent.children].find(child =>
     child.classList.contains('list')
   );
-  const ol = hasOlChildren(parent) ? existingOl : newChildren.ol;
+  const ol = hasTagChildren(parent, 'ol') ? existingOl : newChildren.ol;
   const li = ol.appendChild(newChildren.li);
   newChildren.buttons.forEach(button => li.appendChild(button));
   li.appendChild(newChildren.heading);
   ol.appendChild(li);
-  if (!hasOlChildren(parent)) {
+  if (!hasTagChildren(parent, 'ol')) {
     parent.appendChild(ol);
   }
   setButtonsOnClickEvents();
   newChildren.heading.focus();
-  setActiveMenuElement(newChildren.heading);
-  makeElementEditable(newChildren.heading);
 };
+
+const makeContent = menuElement => {
+  const newElement = document.createElement('div');
+  newElement.classList.add('content');
+  newElement.setAttribute('id', `${menuElement.id}_content`);
+  return newElement;
+}
+
+const appendContent = content => document.querySelector('.section_content').appendChild(content);
