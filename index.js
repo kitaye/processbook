@@ -74,8 +74,10 @@ const handleOnClickElement = element => {
   toggleFoldedState(element);
 };
 
-const deleteSidebarElement = element => {
+const deleteElement = element => {
+  contentId = `${element.parentNode.id}_content`;
   element.parentNode.remove();
+  document.getElementById(contentId).remove()
 };
 
 const makeElementEditable = element => {
@@ -124,7 +126,7 @@ const setButtonsOnClickEvents = () => {
 
   makeElementsEditableOnButtonClick(buttonsEditArray);
   buttonsDeleteArray.forEach(
-    button => (button.onclick = event => deleteSidebarElement(event.target))
+    button => (button.onclick = event => deleteElement(event.target))
   );
 
   buttonsAddArray.forEach(
