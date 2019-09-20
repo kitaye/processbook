@@ -24,6 +24,9 @@ const makeContentId = id => `${id}_content`;
 const toggleFoldedState = element => {
   if (element.parentNode.childElementCount === 4) {
     return;
+  } 
+  if(element.contentEditable === 'true') {
+    return;
   }
   element.classList.toggle('unfolded');
   element.parentNode.lastElementChild.classList.toggle('visually-hidden');
@@ -88,9 +91,6 @@ const makeElementEditable = element => {
       return;
     }
     element.contentEditable = false;
-    element.style.cursor = element.classList.contains('list__item_text')
-      ? 'pointer'
-      : 'auto';
   };
   setEditPossibility(true);
   element.onblur = () => setEditPossibility(false);
@@ -181,6 +181,11 @@ const makeMenuElement = parent => {
       tag: 'button',
       class: 'button button-edit',
       content: '✎'
+    }, 
+    {
+      tag: 'button',
+      class: 'button button-add-child',
+      content: '+'
     }
   ];
   
@@ -206,7 +211,6 @@ const makeMenuElement = parent => {
     newElement.innerHTML = elementData.content;
     if(newElement.tag === 'h2' || newElement.tag ) {
       newElement.setAttribute('contenteditable', true);
-      newElement.setAttribute('placeholder', '...');
     }
 
     return newElement;

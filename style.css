@@ -53,9 +53,10 @@ ol {
   border-radius: 5px;
 }
 
-.list__item:hover,
-.list__item:focus {
-  cursor: pointer;
+.list__item_text:not([contenteditable='true']):hover,
+.list__item_text:not([contenteditable='true']):focus {
+  background-color: lime;
+  cursor: default;
 }
 
 .list__item_text:active {
@@ -84,6 +85,10 @@ ol {
   background-color: inherit;
   padding: 0;
   border: none;
+}
+
+.button:hover {
+  cursor: pointer;
 }
 
 .button-add {
