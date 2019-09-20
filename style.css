@@ -49,14 +49,14 @@ ol {
 
 .list__item_text {
   font-weight: 400;
-  padding: 5px;
+  padding: 5px 30px 5px 60px;
   border-radius: 5px;
-  padding-left: 60px;
 }
 
-.list__item:hover,
-.list__item:focus {
-  cursor: pointer;
+.list__item_text:not([contenteditable='true']):hover,
+.list__item_text:not([contenteditable='true']):focus {
+  background-color: lime;
+  cursor: default;
 }
 
 .list__item_text:active {
@@ -67,7 +67,7 @@ ol {
   font-weight: 600;
 }
 
-.folded {
+.unfolded {
   background-color: #c1c1c1;
 }
 
@@ -78,7 +78,6 @@ ol {
 .button {
   position: absolute;
   top: 5px;
-  left: 0;
   width: 15px;
   height: 15px;
   text-align: center;
@@ -86,6 +85,15 @@ ol {
   background-color: inherit;
   padding: 0;
   border: none;
+}
+
+.button:hover,
+.section_content__button:hover {
+  cursor: pointer;
+}
+
+.button-add {
+  left: 0;
 }
 
 .button-delete {
@@ -96,6 +104,16 @@ ol {
   left: 40px;
 }
 
-.button:active {
+.button-add-child {
+  right: 10px;
+}
+
+.button:active,
+.section_content__button:active {
   opacity: 0.2;
+}
+
+.list__item_text[contenteditable = 'true'] {
+  background-color: #fff;
+  font-weight: 400;
 }

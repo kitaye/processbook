@@ -22,11 +22,14 @@ const makeId = makeCounter();
 const makeContentId = id => `${id}_content`;
 
 const toggleFoldedState = element => {
-  if (element.parentNode.childElementCount === 4) {
+  if (element.parentNode.childElementCount === 5) {
+    return;
+  } 
+  if(element.contentEditable === 'true') {
     return;
   }
-  element.classList.toggle('folded');
-  element.parentNode.lastElementChild.classList.toggle('visually-hidden');
+  element.classList.toggle('unfolded');
+  element.parentNode.querySelector('list') && element.parentNode.querySelector('list').classList.toggle('visually-hidden');
 };
 
 const toggleButtonsVisibilityForElement = element => {
@@ -74,8 +77,10 @@ const handleOnClickElement = element => {
   toggleFoldedState(element);
 };
 
-const deleteSidebarElement = element => {
+const deleteElement = element => {
+  contentId = `${element.parentNode.id}_content`;
   element.parentNode.remove();
+  document.getElementById(contentId).remove()
 };
 
 const makeElementEditable = element => {
@@ -86,9 +91,6 @@ const makeElementEditable = element => {
       return;
     }
     element.contentEditable = false;
-    element.style.cursor = element.classList.contains('list__item_text')
-      ? 'pointer'
-      : 'auto';
   };
   setEditPossibility(true);
   element.onblur = () => setEditPossibility(false);
@@ -116,28 +118,30 @@ const setButtonsOnClickEvents = () => {
     element.classList.contains('button-delete')
   );
   const buttonsAddArray = [...buttons].filter(element =>
-    element.classList.contains('button-add')
+    element.classList.contains('button-add') || element.classList.contains('button-add-child')
   );
   const buttonsEditArray = [...buttons].filter(element =>
     element.classList.contains('button-edit')
   );
-  
+
   makeElementsEditableOnButtonClick(buttonsEditArray);
   buttonsDeleteArray.forEach(
-    button => (button.onclick = event => deleteSidebarElement(event.target))
+    button => (button.onclick = event => deleteElement(event.target))
   );
+
   buttonsAddArray.forEach(
     button =>
       (button.onclick = event => {
-        const parent = event.target.parentNode;
+        const parent = event.target.classList.contains('button-add-child') ? event.target.parentNode: event.target.parentNode.parentNode.parentNode;
         const newChildren = makeMenuElement(parent);
         const heading = [... parent.children].find(element => element.classList.contains('list__item_text'))
         appendNewElement(parent, newChildren);
         const newContent = makeContent(newChildren.li);
         appendContent(newContent);
-        heading.classList.contains('folded') && toggleFoldedState(heading)
+        heading && !heading.classList.contains('unfolded') && toggleFoldedState(heading)
         setupSidebarNavigation();
         setActiveMenuElement(newChildren.heading);
+        setActiveContent(newChildren.heading);
         makeElementEditable(newChildren.heading);
       })
   );
@@ -149,17 +153,18 @@ setButtonsOnClickEvents();
 
 const makeMenuElement = parent => {
   const newElementListLevel = () => {
-    if (parent.classList.contains('level1-list')) {
+    console.log(parent.classList);
+    if (parent.classList.contains('aside')) {
       return 1;
-    } else if (parent.classList.contains('level2-list')) {
+    } else if (parent.classList.contains('level1-list__item')) {
       return 2;
-    }
+    } 
     return 3;
   };
   
   const newListItemData = {
     tag: 'li',
-    class: `level${newElementListLevel()}__list_item list__item`,
+    class: `level${newElementListLevel()}-list__item list__item`,
     content: ''
   };
 
@@ -178,6 +183,11 @@ const makeMenuElement = parent => {
       tag: 'button',
       class: 'button button-edit',
       content: '✎'
+    }, 
+    {
+      tag: 'button',
+      class: 'button button-add-child',
+      content: '+'
     }
   ];
   
@@ -203,7 +213,6 @@ const makeMenuElement = parent => {
     newElement.innerHTML = elementData.content;
     if(newElement.tag === 'h2' || newElement.tag ) {
       newElement.setAttribute('contenteditable', true);
-      newElement.setAttribute('placeholder', '...');
     }
 
     return newElement;
@@ -246,3 +255,20 @@ const makeContent = menuElement => {
 }
 
 const appendContent = content => document.querySelector('.section_content').appendChild(content);
+
+const buttonEditContent = document.querySelector('.section_content__button-edit');
+console.log(buttonEditContent);
+const visibleContent = [... document.getElementsByClassName('content')].find(element => !element.classList.contains('visually-hidden'));
+
+editContent = () => {
+  visibleContent.contentEditable = 'true';
+  visibleContent.focus();
+  visibleContent.addEventListener('onblur', event => event.target.contentEditable = 'false');
+  visibleContent.onkeydown = event => {
+    if(event.keyCode === 13) {
+      visibleContent.contentEditable = 'false'
+    }
+  }
+}
+
+buttonEditContent.onclick = () => editContent();
