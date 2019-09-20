@@ -110,3 +110,8 @@ ol {
 .button:active {
   opacity: 0.2;
 }
+
+.list__item_text[contenteditable = 'true'] {
+  background-color: #fff;
+  font-weight: 400;
+}

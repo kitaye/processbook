@@ -22,14 +22,14 @@ const makeId = makeCounter();
 const makeContentId = id => `${id}_content`;
 
 const toggleFoldedState = element => {
-  if (element.parentNode.childElementCount === 4) {
+  if (element.parentNode.childElementCount === 5) {
     return;
   } 
   if(element.contentEditable === 'true') {
     return;
   }
   element.classList.toggle('unfolded');
-  element.parentNode.lastElementChild.classList.toggle('visually-hidden');
+  element.parentNode.querySelector('list').classList.toggle('visually-hidden');
 };
 
 const toggleButtonsVisibilityForElement = element => {
@@ -152,17 +152,18 @@ setButtonsOnClickEvents();
 
 const makeMenuElement = parent => {
   const newElementListLevel = () => {
-    if (parent.classList.contains('level1-list')) {
+    console.log(parent.classList);
+    if (parent.classList.contains('aside')) {
       return 1;
-    } else if (parent.classList.contains('level2-list')) {
+    } else if (parent.classList.contains('level1-list__item')) {
       return 2;
-    }
+    } 
     return 3;
   };
   
   const newListItemData = {
     tag: 'li',
-    class: `level${newElementListLevel()}__list_item list__item`,
+    class: `level${newElementListLevel()}-list__item list__item`,
     content: ''
   };
 
