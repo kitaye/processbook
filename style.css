@@ -87,7 +87,8 @@ ol {
   border: none;
 }
 
-.button:hover {
+.button:hover,
+.section_content__button:hover {
   cursor: pointer;
 }
 
@@ -107,7 +108,8 @@ ol {
   right: 10px;
 }
 
-.button:active {
+.button:active,
+.section_content__button:active {
   opacity: 0.2;
 }
 

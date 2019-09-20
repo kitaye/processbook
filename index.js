@@ -29,7 +29,7 @@ const toggleFoldedState = element => {
     return;
   }
   element.classList.toggle('unfolded');
-  element.parentNode.querySelector('list').classList.toggle('visually-hidden');
+  element.parentNode.querySelector('list') && element.parentNode.querySelector('list').classList.toggle('visually-hidden');
 };
 
 const toggleButtonsVisibilityForElement = element => {
@@ -141,6 +141,7 @@ const setButtonsOnClickEvents = () => {
         heading && !heading.classList.contains('unfolded') && toggleFoldedState(heading)
         setupSidebarNavigation();
         setActiveMenuElement(newChildren.heading);
+        setActiveContent(newChildren.heading);
         makeElementEditable(newChildren.heading);
       })
   );
@@ -254,3 +255,20 @@ const makeContent = menuElement => {
 }
 
 const appendContent = content => document.querySelector('.section_content').appendChild(content);
+
+const buttonEditContent = document.querySelector('.section_content__button-edit');
+console.log(buttonEditContent);
+const visibleContent = [... document.getElementsByClassName('content')].find(element => !element.classList.contains('visually-hidden'));
+
+editContent = () => {
+  visibleContent.contentEditable = 'true';
+  visibleContent.focus();
+  visibleContent.addEventListener('onblur', event => event.target.contentEditable = 'false');
+  visibleContent.onkeydown = event => {
+    if(event.keyCode === 13) {
+      visibleContent.contentEditable = 'false'
+    }
+  }
+}
+
+buttonEditContent.onclick = () => editContent();
