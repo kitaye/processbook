@@ -32,6 +32,19 @@ const toggleFoldedState = element => {
   element.parentNode.querySelector('list') && element.parentNode.querySelector('list').classList.toggle('visually-hidden');
 };
 
+const setEndOfContenteditable = contentEditableElement => 
+{
+    let range
+    let selection;
+    
+        range = document.createRange();
+        range.selectNodeContents(contentEditableElement);
+        range.collapse(false);
+        selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+}
+
 const toggleButtonsVisibilityForElement = element => {
   const buttons = [...element.parentNode.children].filter(element =>
     element.classList.contains('button')
@@ -93,6 +106,7 @@ const makeElementEditable = element => {
     element.contentEditable = false;
   };
   setEditPossibility(true);
+  setEndOfContenteditable(element);
   element.onblur = () => setEditPossibility(false);
   element.onkeydown = event => {
     if(event.keyCode === 13) { 
@@ -258,10 +272,11 @@ const appendContent = content => document.querySelector('.section_content').appe
 
 const buttonEditContent = document.querySelector('.section_content__button-edit');
 console.log(buttonEditContent);
-const visibleContent = [... document.getElementsByClassName('content')].find(element => !element.classList.contains('visually-hidden'));
 
 editContent = () => {
+  const visibleContent = [... document.getElementsByClassName('content')].find(element => !element.classList.contains('visually-hidden'));
   visibleContent.contentEditable = 'true';
+  setEndOfContenteditable(visibleContent);
   visibleContent.focus();
   visibleContent.addEventListener('onblur', event => event.target.contentEditable = 'false');
   visibleContent.onkeydown = event => {
