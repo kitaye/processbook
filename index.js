@@ -63,8 +63,8 @@ const setActiveContent = currentMenuElement => {
   );
 
   activeMenuElement &&
-    activeMenuElementContent.classList.add('visually-hidden');
   currentMenuElementContent.classList.remove('visually-hidden');
+  activeMenuElementContent.classList.add('visually-hidden');
 };
 
 const setupSidebarNavigation = () =>
@@ -140,8 +140,8 @@ const setButtonsOnClickEvents = () => {
         appendContent(newContent);
         heading && !heading.classList.contains('unfolded') && toggleFoldedState(heading)
         setupSidebarNavigation();
-        setActiveMenuElement(newChildren.heading);
         setActiveContent(newChildren.heading);
+        setActiveMenuElement(newChildren.heading);
         makeElementEditable(newChildren.heading);
       })
   );
