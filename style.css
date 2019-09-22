@@ -116,4 +116,11 @@ ol {
 .list__item_text[contenteditable = 'true'] {
   background-color: #fff;
   font-weight: 400;
+  border-radius: 5px;
+  border: 2px solid orange;
+  outline: none;
+}
+
+.content[contenteditable = 'true'] {
+  outline: none;
 }
