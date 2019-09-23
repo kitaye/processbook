@@ -5,11 +5,145 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Книга процессов</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <style>
+    body {
+  font-family: tahoma, Arial;
+  font-size: 15px;
+  color: #000;
+  background-color: #fff;
+  min-height: 100vh;
+}
 
+ol {
+  counter-reset: item;
+}
+
+/* .header {
+  dsp
+} */
+
+.level1-list {
+  padding-left: 0;
+}
+
+.list__item {
+  position: relative;
+}
+
+.list__item_text:before {
+  content: counters(item, '.') ' ';
+  counter-increment: item;
+}
+
+.header {
+  background-color: #f7f7ff;
+  padding: 10px;
+  text-align: center;
+}
+
+.heading {
+  font-size: 17px;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 2fr 5fr;
+  grid-column-gap: 5px;
+}
+
+.aside {
+  background-color: #f1f1f1;
+}
+
+.list {
+  list-style: none;
+}
+
+.list__item_text {
+  font-weight: 400;
+  padding: 5px 30px 5px 60px;
+  border-radius: 5px;
+}
+
+.list__item_text:not([contenteditable='true']):hover,
+.list__item_text:not([contenteditable='true']):focus {
+  background-color: lime;
+  cursor: default;
+}
+
+.list__item_text:active {
+  opacity: 0.5;
+}
+
+.active {
+  font-weight: 600;
+}
+
+.unfolded {
+  background-color: #c1c1c1;
+}
+
+.visually-hidden {
+  display: none;
+}
+
+.button {
+  position: absolute;
+  top: 5px;
+  width: 15px;
+  height: 15px;
+  text-align: center;
+  font-size: 17px;
+  background-color: inherit;
+  padding: 0;
+  border: none;
+}
+
+.button:hover,
+.section_content__button:hover {
+  cursor: pointer;
+}
+
+.button-add {
+  left: 0;
+}
+
+.button-delete {
+  left: 20px;
+}
+
+.button-edit {
+  left: 40px;
+}
+
+.button-add-child {
+  right: 10px;
+}
+
+.button:active,
+.section_content__button:active {
+  opacity: 0.2;
+}
+
+.list__item_text[contenteditable = 'true'] {
+  background-color: #fff;
+  font-weight: 400;
+  border-radius: 5px;
+  border: 2px solid orange;
+  outline: none;
+}
+
+.content[contenteditable = 'true'] {
+  outline: none;
+}
+    </style>
+  </head>
+  
   <body>
     <header class="header">
+        <a class="link-download link-download-editable">Загрузить с возможностью редактирования</link>
+        <a class="link-download link-download-locked">Загрузить без возможности редактирования</link>
       <h1 class="heading">
         Книга процессов. Направление партнерских КЦ.
       </h1>
@@ -124,6 +258,321 @@
       </section>
     </main>
 
-    <script src="index.js"></script>
+    <script>
+    const statefulElements = document.getElementsByClassName('list__item_text');
+const editableElements = document.getElementsByClassName('editable');
+const buttons = document.getElementsByClassName('button');
+const hasTagChildren = (element, tag) => [...element.children].map(element => element.tagName.toLowerCase()).includes(tag);
+
+const siblingsArray = element => [...element.parentNode.children];
+
+const maxId = [...statefulElements].reduce(
+  (acc, current) => (Number(current.parentNode.id) > acc ? Number(current.parentNode.id) : acc),
+  0
+);
+
+const makeCounter = () => {
+  let counter = maxId;
+  return () => (counter = Number(counter) + 1);
+};
+
+const getMenuElementContentId = menuElement =>
+  `${menuElement.parentNode.id}_content`;
+
+const makeId = makeCounter();
+const makeContentId = id => `${id}_content`;
+
+const toggleFoldedState = element => {
+  if (element.parentNode.childElementCount === 5) {
+    return;
+  } 
+  if(element.contentEditable === 'true') {
+    return;
+  }
+  element.classList.toggle('unfolded');
+  element.parentNode.querySelector('list') && element.parentNode.querySelector('list').classList.toggle('visually-hidden');
+};
+
+const setEndOfContenteditable = contentEditableElement => 
+{
+    let range
+    let selection;
+    
+        range = document.createRange();
+        range.selectNodeContents(contentEditableElement);
+        range.collapse(false);
+        selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+}
+
+const toggleButtonsVisibilityForElement = element => {
+  const buttons = [...element.parentNode.children].filter(element =>
+    element.classList.contains('button')
+  );
+  const isActive = element.classList.contains('active');
+  buttons.forEach(button =>
+    isActive
+      ? button.classList.remove('visually-hidden')
+      : button.classList.add('visually-hidden')
+  );
+};
+
+const setActiveMenuElement = element => {
+  const activeElement = document.querySelector('.active.list__item_text');
+
+  activeElement && activeElement.classList.toggle('active');
+  element.classList.toggle('active');
+  toggleButtonsVisibilityForElement(element);
+  activeElement && toggleButtonsVisibilityForElement(activeElement);
+};
+
+const setActiveContent = currentMenuElement => {
+  const activeMenuElement = document.querySelector('.active.list__item_text');
+  const activeMenuElementContent =
+    activeMenuElement &&
+    document.getElementById(getMenuElementContentId(activeMenuElement));
+  const currentMenuElementContent = document.getElementById(
+    getMenuElementContentId(currentMenuElement)
+  );
+
+  activeMenuElement &&
+  currentMenuElementContent.classList.remove('visually-hidden');
+  activeMenuElementContent.classList.add('visually-hidden');
+};
+
+const setupSidebarNavigation = () =>
+  [... statefulElements].forEach(element => element.onclick = () => handleOnClickElement(event.target));
+
+setupSidebarNavigation();
+const handleOnClickElement = element => {
+  setActiveContent(element);
+  setActiveMenuElement(element);
+  toggleFoldedState(element);
+};
+
+const deleteElement = element => {
+  contentId = `${element.parentNode.id}_content`;
+  element.parentNode.remove();
+  document.getElementById(contentId).remove()
+};
+
+const makeElementEditable = element => {
+  const setEditPossibility = isPossible => {
+    if (isPossible) {
+      element.contentEditable = true;
+      element.focus();
+      return;
+    }
+    element.contentEditable = false;
+  };
+  setEditPossibility(true);
+  setEndOfContenteditable(element);
+  element.onblur = () => setEditPossibility(false);
+  element.onkeydown = event => {
+    if(event.keyCode === 13) { 
+      setEditPossibility(false);
+    }
+  }
+};
+
+const makeElementsEditableOnButtonClick = buttons => {
+  const editableElement = button =>
+    siblingsArray(button).find(element =>
+      element.classList.contains('editable')
+    );
+  buttons.forEach(
+    button =>
+      (button.onclick = event =>
+        makeElementEditable(editableElement(event.target)))
+  );
+};
+
+const setButtonsOnClickEvents = () => {
+  const buttonsDeleteArray = [...buttons].filter(element =>
+    element.classList.contains('button-delete')
+  );
+  const buttonsAddArray = [...buttons].filter(element =>
+    element.classList.contains('button-add') || element.classList.contains('button-add-child')
+  );
+  const buttonsEditArray = [...buttons].filter(element =>
+    element.classList.contains('button-edit')
+  );
+
+  makeElementsEditableOnButtonClick(buttonsEditArray);
+  buttonsDeleteArray.forEach(
+    button => (button.onclick = event => deleteElement(event.target))
+  );
+
+  buttonsAddArray.forEach(
+    button =>
+      (button.onclick = event => {
+        const parent = event.target.classList.contains('button-add-child') ? event.target.parentNode: event.target.parentNode.parentNode.parentNode;
+        const newChildren = makeMenuElement(parent);
+        const heading = [... parent.children].find(element => element.classList.contains('list__item_text'))
+        appendNewElement(parent, newChildren);
+        const newContent = makeContent(newChildren.li);
+        appendContent(newContent);
+        heading && !heading.classList.contains('unfolded') && toggleFoldedState(heading)
+        setupSidebarNavigation();
+        setActiveContent(newChildren.heading);
+        setActiveMenuElement(newChildren.heading);
+        makeElementEditable(newChildren.heading);
+      })
+  );
+};
+
+setButtonsOnClickEvents();
+
+
+
+const makeMenuElement = parent => {
+  const newElementListLevel = () => {
+    if (parent.classList.contains('aside')) {
+      return 1;
+    } else if (parent.classList.contains('level1-list__item')) {
+      return 2;
+    } 
+    return 3;
+  };
+  
+  const newListItemData = {
+    tag: 'li',
+    class: `level${newElementListLevel()}-list__item list__item`,
+    content: ''
+  };
+
+  const newButtonsData = [
+    {
+      tag: 'button',
+      class: 'button button-add',
+      content: '+'
+    },
+    {
+      tag: 'button',
+      class: 'button button-delete',
+      content: '✕'
+    },
+    {
+      tag: 'button',
+      class: 'button button-edit',
+      content: '✎'
+    }, 
+    {
+      tag: 'button',
+      class: 'button button-add-child',
+      content: '+'
+    }
+  ];
+  
+
+  const newHeadingData = {
+    tag: `h${newElementListLevel() + 1}`,
+    class: `level${newElementListLevel()}-list__heading list__item_text editable`,
+    content: ''
+  };
+
+  const newOlData = {
+    tag: 'ol',
+    class: `list level${newElementListLevel()}-list`,
+    content: ''
+  };
+
+  const makeElement = elementData => {
+    newElement = document.createElement(elementData.tag);
+    if (elementData.tag === 'li') {
+      newElement.setAttribute('id', makeId());
+    }
+    newElement.setAttribute('class', elementData.class);
+    newElement.innerHTML = elementData.content;
+    if(newElement.tag === 'h2' || newElement.tag ) {
+      newElement.setAttribute('contenteditable', true);
+    }
+
+    return newElement;
+  };
+
+  const newOl = !hasTagChildren(parent, 'ol') && makeElement(newOlData);
+  const newListItem = makeElement(newListItemData);
+  const newHeading = makeElement(newHeadingData);
+  const newButtons = newButtonsData.map(buttonData => makeElement(buttonData));
+
+  return {
+    ol: !hasTagChildren(parent, 'ol') && newOl,
+    li: newListItem,
+    heading: newHeading,
+    buttons: newButtons
+  };
+};
+
+const appendNewElement = (parent, newChildren) => {
+  const existingOl = [...parent.children].find(child =>
+    child.classList.contains('list')
+  );
+  const ol = hasTagChildren(parent, 'ol') ? existingOl : newChildren.ol;
+  const li = ol.appendChild(newChildren.li);
+  newChildren.buttons.forEach(button => li.appendChild(button));
+  li.appendChild(newChildren.heading);
+  ol.appendChild(li);
+  if (!hasTagChildren(parent, 'ol')) {
+    parent.appendChild(ol);
+  }
+  setButtonsOnClickEvents();
+  newChildren.heading.focus();
+};
+
+const makeContent = menuElement => {
+  const newElement = document.createElement('div');
+  newElement.classList.add('content');
+  newElement.setAttribute('id', `${menuElement.id}_content`);
+  return newElement;
+}
+
+const appendContent = content => document.querySelector('.section_content').appendChild(content);
+
+const buttonEditContent = document.querySelector('.section_content__button-edit');
+
+editContent = () => {
+  const visibleContent = [... document.getElementsByClassName('content')].find(element => !element.classList.contains('visually-hidden'));
+  visibleContent.contentEditable = 'true';
+  setEndOfContenteditable(visibleContent);
+  visibleContent.focus();
+  visibleContent.addEventListener('onblur', event => event.target.contentEditable = 'false');
+  visibleContent.onkeydown = event => {
+    if(event.keyCode === 13) {
+      visibleContent.contentEditable = 'false'
+    }
+  }
+}
+
+buttonEditContent.onclick = () => editContent();
+
+// const downloadEditableFile = button => {
+//   let contentFile = document.querySelector('html').innerHTML;
+//   button.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(contentFile);
+// }
+
+// const downloadLockedFile = button => {
+//   let contentFile = document.querySelector('html').cloneNode(true).innerHTML;
+// [... buttons].forEach(button => button.remove());
+// document.querySelector('.section_content__button').remove()
+//   button.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(contentFile);
+// }
+
+const linkDownloadEditable = document.querySelector('.link-download-editable');
+const linkDownloadLocked = document.querySelector('.link-download-locked');
+
+linkDownloadEditable.onclick = function() {
+  let contentFile = document.querySelector('html').innerHTML;
+  this.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(contentFile);
+}
+linkDownloadLocked.onclick = function() {
+  const clone = document.querySelector('html').cloneNode(true);
+  const buttons = clone.getElementsByClassName('button');
+  [... buttons].forEach(button => button.remove());
+  clone.querySelector('.section_content__button').remove()
+  this.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(clone.innerHTML);
+};
+    </script>
   </body>
 </html>

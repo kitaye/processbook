@@ -287,3 +287,25 @@ editContent = () => {
 }
 
 buttonEditContent.onclick = () => editContent();
+
+const downloadEditableFile = button => {
+  console.log('do me');
+  let contentFile = document.querySelector('html').innerHTML;
+  button.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(contentFile);
+}
+
+const downloadLockedFile = button => {
+[... buttons].forEach(button => button.remove());
+document.querySelector('.section_content__button').remove()
+  let contentFile = document.querySelector('html').innerHTML;
+  button.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(contentFile);
+}
+
+const linkDownloadEditable = document.querySelector('.link-download-editable');
+const linkDownloadLocked = document.querySelector('.link-download-locked');
+
+linkDownloadEditable.onclick = function() {
+  let contentFile = document.querySelector('html').innerHTML;
+  this.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(contentFile);
+}
+linkDownloadLocked.onclick = downloadLockedFile;
