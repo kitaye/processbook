@@ -530,8 +530,8 @@
         const removableElements = clone.getElementsByClassName('removable');
         [...removableElements].forEach(element => element.remove());
         this.href =
-        `data: application/html;charset=utf-8, <!DOCTYPE html><html lang="ru">` +
-          encodeURIComponent(clone.innerHTML) + '</html>';
+        'data: application/html;charset=utf-8,' +
+          encodeURIComponent(clone.innerHTML);
       };
 
       linkDownloadEditable.onclick = function() {
@@ -540,8 +540,8 @@
           element.remove()
         );
         this.href =
-          `data: application/html;charset=utf-8, <!DOCTYPE html><html lang="ru"> 
-          ${encodeURIComponent(clone.innerHTML)}</html>`;
+          'data: application/html;charset=utf-8,' +
+          encodeURIComponent(clone.innerHTML);
       };
     </script>
   </body>
