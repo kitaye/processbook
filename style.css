@@ -10,9 +10,14 @@ ol {
   counter-reset: item;
 }
 
-/* .header {
-  dsp
-} */
+.header {
+  display: flex;
+  flex-direction: column;
+}
+
+.link-download {
+  margin-right: 40px;
+}
 
 .level1-list {
   padding-left: 0;

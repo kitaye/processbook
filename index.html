@@ -19,10 +19,6 @@ ol {
   counter-reset: item;
 }
 
-/* .header {
-  dsp
-} */
-
 .level1-list {
   padding-left: 0;
 }
@@ -37,9 +33,19 @@ ol {
 }
 
 .header {
+  display: flex;
+  flex-direction: column;
   background-color: #f7f7ff;
   padding: 10px;
   text-align: center;
+}
+
+.link-download {
+  margin-right: 40px;
+  padding: 5px 10px;
+  text-decoration: underline;
+  color: limegreen;
+  cursor: pointer;
 }
 
 .heading {
@@ -142,8 +148,10 @@ ol {
   
   <body>
     <header class="header">
-        <a class="link-download link-download-editable">Загрузить с возможностью редактирования</link>
-        <a class="link-download link-download-locked">Загрузить без возможности редактирования</link>
+        <div class="links">
+          <a class="link-download link-download-editable removable">Загрузить с возможностью редактирования</a>
+          <a class="link-download link-download-locked removable">Загрузить без возможности редактирования</a>
+        </div>
       <h1 class="heading">
         Книга процессов. Направление партнерских КЦ.
       </h1>
@@ -153,106 +161,20 @@ ol {
       <aside class="aside">
         <ol class="list level1-list">
           <li id="1" class="level1-list__item list__item">
-            <button class="button button-add visually-hidden">+</button>
-            <button class="button button-delete visually-hidden">✕</button>
-            <button class="button button-edit visually-hidden">✎</button>
+            <button class="removable button button-add visually-hidden">+</button>
+            <button class="removable button button-edit visually-hidden">✎</button>
 
-            <h2 class="level1-list__heading unfolded list__item_text editable">
+            <h2 class="level1-list__heading unfolded list__item_text editable active">
               Тематика
             </h2>
             <button class="button button-add-child">+</button>
-            <ol class="list level2-list">
-              <li id="2" class="list__item level2-list__item">
-                <button class="button button-add">+</button> 
-                <button class="button button-delete">✕</button>
-                <button class="button button-edit">✎</button>
-                <h3
-                  class="level2-list__heading active unfolded list__item_text editable"
-                >
-                  Запуск колл центра
-                </h3>
-                <ol class="list level3-list">
-                  <li id="3" class="list__item level3-list__item">
-                    <button class="button button-add visually-hidden">+</button>
-                    <button class="button button-delete visually-hidden">✕</button>
-                    <button class="button button-edit visually-hidden">✎</button>
-                    
-                    <h4 class="list__item_text editable">
-                      Запись вебинара по подбору
-                    </h4>
-                  </li>
-                  <li id="4" class="list__item level3-list__item">
-                    <button class="button button-add visually-hidden">+</button> 
-                    <button class="button button-delete visually-hidden">✕</button>
-                    <button class="button button-edit visually-hidden">✎</button>
-                    
-                    <h4 class="list__item_text unfolded editable">Построение подбора</h4>
-                    <ol class="list level4-list">
-                      <li id="5" class="list__item level4-list__item">
-                    <button class="button button-add visually-hidden">+</button>
-                    <button class="button button-delete visually-hidden">✕</button>
-                    <button class="button button-edit visually-hidden">✎</button>
-
-            
-            <h4 class="list__item_text editable">Общее описание</h4>
-                      </li>
-                      <li id="6" class="list__item level4-list__item">
-                          <button class="button button-add visually-hidden">+</button>
-                          <button class="button button-delete visually-hidden">✕</button>
-                          <button class="button button-edit visually-hidden">✎</button>
-                        <h4 class="list__item_text editable">
-                          Кто занимается подбором
-                        </h4>
-                      </li>
-                      <li id="7" class="list__item level4-list__item">
-                        <button class="button button-add visually-hidden">+</button>
-                        <button class="button button-delete visually-hidden">✕</button>
-                        <button class="button button-edit visually-hidden">✎</button>
-                        <h4 class="list__item_text editable">
-                          Инструменты подбора
-                        </h4>
-                      </li>
-                      <li id="8" class="list__item level4-list__item">
-                        <button class="button button-add visually-hidden">+</button> 
-                        <button class="button button-delete visually-hidden">✕</button>
-                        <button class="button button-edit visually-hidden">✎</button>
-                        <h4 class="list__item_text editable">
-                          Рекомендации к поиску
-                        </h4>
-                      </li>
-                    </ol>
-                  </li>
-                </ol>
-              </li>
-            </ol>
           
         </ol>
       </aside>
       <section class="section_content">
-        <button class="section_content__button-edit section_content__button">✎</button>
-        <div class="content visually-hidden" id='1_content'>
+        <button class="section_content__button-edit section_content__button removable">✎</button>
+        <div class="content" id='1_content'>
             Здесь могла бы быть ваша реклама
-        </div>
-        <div class="content" id='2_content'>
-            Здесь могла бы быть ваша реклама, а не реклама Альфа-банка
-        </div>
-        <div class="content visually-hidden" id='3_content'>
-            Здесь могла бы быть ваша реклама тоже
-        </div>
-        <div class="content visually-hidden" id='4_content'>
-            Здесь могла бы быть ваша реклама, что характерно
-        </div>
-        <div class="content visually-hidden" id='5_content'>
-            Здесь могла бы быть ваша реклама за небольшую плату
-        </div>
-        <div class="content visually-hidden" id='6_content'>
-            Здесь могла бы быть ваша реклама, а могла бы и не быть
-        </div>
-        <div class="content visually-hidden" id='7_content'>
-            Здесь могла бы быть ваша реклама и все были бы довольны
-        </div>
-        <div class="content visually-hidden" id='8_content'>
-            Здесь могла бы быть ваша реклама, если бы вы внесли аванс вовремя
         </div>
         
       </section>
@@ -366,8 +288,8 @@ const makeElementEditable = element => {
     }
     element.contentEditable = false;
   };
-  setEditPossibility(true);
   setEndOfContenteditable(element);
+  setEditPossibility(true);
   element.onblur = () => setEditPossibility(false);
   element.onkeydown = event => {
     if(event.keyCode === 13) { 
@@ -445,22 +367,22 @@ const makeMenuElement = parent => {
   const newButtonsData = [
     {
       tag: 'button',
-      class: 'button button-add',
+      class: 'button button-add removable',
       content: '+'
     },
     {
       tag: 'button',
-      class: 'button button-delete',
+      class: 'button button-delete removable',
       content: '✕'
     },
     {
       tag: 'button',
-      class: 'button button-edit',
+      class: 'button button-edit removable',
       content: '✎'
     }, 
     {
       tag: 'button',
-      class: 'button button-add-child',
+      class: 'button button-add-child removable',
       content: '+'
     }
   ];
@@ -547,30 +469,21 @@ editContent = () => {
 
 buttonEditContent.onclick = () => editContent();
 
-// const downloadEditableFile = button => {
-//   let contentFile = document.querySelector('html').innerHTML;
-//   button.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(contentFile);
-// }
-
-// const downloadLockedFile = button => {
-//   let contentFile = document.querySelector('html').cloneNode(true).innerHTML;
-// [... buttons].forEach(button => button.remove());
-// document.querySelector('.section_content__button').remove()
-//   button.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(contentFile);
-// }
 
 const linkDownloadEditable = document.querySelector('.link-download-editable');
 const linkDownloadLocked = document.querySelector('.link-download-locked');
 
-linkDownloadEditable.onclick = function() {
-  let contentFile = document.querySelector('html').innerHTML;
-  this.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(contentFile);
-}
+
 linkDownloadLocked.onclick = function() {
   const clone = document.querySelector('html').cloneNode(true);
-  const buttons = clone.getElementsByClassName('button');
-  [... buttons].forEach(button => button.remove());
-  clone.querySelector('.section_content__button').remove()
+  const remobableElements = clone.getElementsByClassName('removable');
+  [... removableElements].forEach(element => element.remove());
+  this.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(clone.innerHTML);
+};
+
+linkDownloadEditable.onclick = function() {
+  const clone = document.querySelector('html').cloneNode(true);
+  [... clone.getElementsByClassName('link-download')].forEach(element => element.remove());
   this.href = 'data:application/html;charset=utf-8,' + encodeURIComponent(clone.innerHTML);
 };
     </script>
