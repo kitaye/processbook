@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Книга процессов</title>
-    <!-- <link rel="stylesheet" href="style.css" /> -->
     <style>
       body {
         display: flex;
@@ -157,9 +156,11 @@
     <header class="header">
       <div class="links">
         <a class="link-download link-download-editable removable"
+        download = 'Редактируемый файл.html'
           >Загрузить с возможностью редактирования</a
         >
-        <a class="link-download link-download-locked removable"
+        <a class="link-download link-download-locked removable" 
+        download = 'Файл для пользователя.html'
           >Загрузить без возможности редактирования</a
         >
       </div>
@@ -291,9 +292,9 @@
         );
 
         activeMenuElement &&
-          currentMenuElementContent.classList.remove('visually-hidden');
-        activeMenuElementContent &&
           activeMenuElementContent.classList.add('visually-hidden');
+        activeMenuElementContent &&
+          currentMenuElementContent.classList.remove('visually-hidden');
       };
 
       const setupSidebarNavigation = () =>
@@ -526,10 +527,10 @@
 
       linkDownloadLocked.onclick = function() {
         const clone = document.querySelector('html').cloneNode(true);
-        const remobableElements = clone.getElementsByClassName('removable');
+        const removableElements = clone.getElementsByClassName('removable');
         [...removableElements].forEach(element => element.remove());
         this.href =
-          'data:application/html;charset=utf-8,' +
+        'data: application/html;charset=utf-8,' +
           encodeURIComponent(clone.innerHTML);
       };
 
@@ -539,7 +540,7 @@
           element.remove()
         );
         this.href =
-          'data:application/html;charset=utf-8,' +
+          'data: application/html;charset=utf-8,' +
           encodeURIComponent(clone.innerHTML);
       };
     </script>
