@@ -536,9 +536,6 @@
 
       linkDownloadEditable.onclick = function() {
         const clone = document.querySelector('html').cloneNode(true);
-        [...clone.getElementsByClassName('link-download')].forEach(element =>
-          element.remove()
-        );
         this.href =
           'data: application/html;charset=utf-8,' +
           encodeURIComponent(clone.innerHTML);
