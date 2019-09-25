@@ -187,7 +187,7 @@
             </button>
 
             <h2
-              class="level1-list__heading unfolded list__item_text editable active"
+              class="level1-list__heading list__item_text editable active"
             >
               Тематика
             </h2>
@@ -241,9 +241,6 @@
 
       const toggleFoldedState = element => {
         if (![...element.parentNode.children].map(( { tagName }) => tagName).includes('OL')) {
-          console.log(element.parentNode.children);
-          console.log([...element.parentNode.children].map(({ tagName }) => tagName));
-          console.log('fufufuf');
           return;
         }
         if (element.contentEditable === 'true') {
@@ -377,7 +374,8 @@
         buttonsAddArray.forEach(
           button =>
             (button.onclick = event => {
-              const parent = event.target.classList.contains('button-add-child')
+              const isAppendingChild = event.target.classList.contains('button-add-child');
+              const parent = isAppendingChild
                 ? event.target.parentNode
                 : event.target.parentNode.parentNode.parentNode;
               const newChildren = makeMenuElement(parent);
@@ -388,7 +386,7 @@
               const newContent = makeContent(newChildren.li);
               appendContent(newContent);
               heading &&
-                !heading.classList.contains('unfolded') &&
+                heading.classList.contains('unfolded') &&
                 toggleFoldedState(heading);
               setupSidebarNavigation();
               setActiveContent(newChildren.heading);
