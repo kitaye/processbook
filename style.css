@@ -31,13 +31,15 @@ body {
     background-color: #f7f7ff;
     padding: 10px;
     text-align: center;
+    margin-bottom: 5px;
+    border-radius: 10px;
   }
 
   .link-download {
     margin-right: 40px;
     padding: 5px 10px;
     text-decoration: underline;
-    color: limegreen;
+    color: #2196F3;
     cursor: pointer;
   }
 
@@ -54,6 +56,7 @@ body {
 
   .aside {
     background-color: #f1f1f1;
+    border-radius: 10px;
   }
 
   .list {
@@ -134,10 +137,26 @@ body {
     outline: none;
   }
 
+  .section_content {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      border: 1px solid #c7c7c7;
+      border-radius: 10px;
+
+  }
+  
   .content {
     padding: 10px;
   }
 
+  .section_content__button {
+    align-self: center;
+    padding: 5px 30px;
+    border-radius: 5px;
+    font-size: 17px;
+  }
+  
   .content[contenteditable='true'] {
     outline: none;
   }
