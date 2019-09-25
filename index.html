@@ -240,16 +240,15 @@
       const makeContentId = id => `${id}_content`;
 
       const toggleFoldedState = element => {
-        console.log('fdfdfdf');
-        console.log(element.parentNode.childElementCount)
-        if (element.parentNode.childElementCount === 4) {
-          console.log('wtf');
+        if (![...element.parentNode.children].map(( { tagName }) => tagName).includes('OL')) {
+          console.log(element.parentNode.children);
+          console.log([...element.parentNode.children].map(({ tagName }) => tagName));
+          console.log('fufufuf');
           return;
         }
         if (element.contentEditable === 'true') {
           return;
         }
-        console.log('do me');
         element.classList.toggle('unfolded');
         element.parentNode.querySelector('.list') &&
           element.parentNode
@@ -550,6 +549,10 @@
           'data: application/html;charset=utf-8,' +
           encodeURIComponent(clone.innerHTML);
       };
+
+      const getHigherLevelHeadings = heading => {
+        const iter = (element, result) => element.classList.contains('aside') ? result: iter(element.closest('.list__item'), [...result, element])
+      }
     </script>
   </body>
 </html>
