@@ -1,0 +1,148 @@
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: tahoma, Arial;
+    font-size: 15px;
+    color: #000;
+    background-color: #fff;
+    min-height: 100vh;
+  }
+
+  ol {
+    counter-reset: item;
+  }
+
+  .level1-list {
+    padding-left: 0;
+  }
+
+  .list__item {
+    position: relative;
+  }
+
+  .list__item_text:before {
+    content: counters(item, '.') ' ';
+    counter-increment: item;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    background-color: #f7f7ff;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .link-download {
+    margin-right: 40px;
+    padding: 5px 10px;
+    text-decoration: underline;
+    color: limegreen;
+    cursor: pointer;
+  }
+
+  .heading {
+    font-size: 17px;
+  }
+
+  .main {
+    flex: auto;
+    display: grid;
+    grid-template-columns: 2fr 5fr;
+    grid-column-gap: 5px;
+  }
+
+  .aside {
+    background-color: #f1f1f1;
+  }
+
+  .list {
+    list-style: none;
+  }
+
+  .list__item_text {
+    font-weight: 400;
+    padding: 5px 30px 5px 60px;
+    border-radius: 5px;
+  }
+
+  .list__item_text:not([contenteditable='true']):hover,
+  .list__item_text:not([contenteditable='true']):focus {
+    background-color: lime;
+    cursor: default;
+  }
+
+  .list__item_text:active {
+    opacity: 0.5;
+  }
+
+  .active {
+    font-weight: 600;
+  }
+
+  .unfolded {
+    background-color: #c1c1c1;
+  }
+
+  .visually-hidden {
+    display: none;
+  }
+
+  .button {
+    position: absolute;
+    width: 15px;
+    text-align: center;
+    background-color: inherit;
+    padding: 0;
+    border: none;
+  }
+
+  .button:hover,
+  .section_content__button:hover {
+    cursor: pointer;
+  }
+
+  .button-add {
+    left: 15px;
+    top: 3px;
+    font-size: 20px;
+  }
+
+  .button-delete {
+    left: 35px;
+    top: 3px;
+    font-size: 20px;
+  }
+
+  /* .button-edit {
+    left: 40px;
+    top: 7px;
+    font-size: 17px;
+  } */
+
+  .button-add-child {
+    right: 15px;
+    top: 3px;
+    font-size: 20px;
+  }
+
+  .button:active,
+  .section_content__button:active {
+    opacity: 0.2;
+  }
+
+  .list__item_text[contenteditable='true'] {
+    background-color: #fff;
+    font-weight: 400;
+    border-radius: 5px;
+    border: 2px solid orange;
+    outline: none;
+  }
+
+  .content {
+    padding: 10px;
+  }
+
+  .content[contenteditable='true'] {
+    outline: none;
+  }
