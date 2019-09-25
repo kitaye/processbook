@@ -55,6 +55,25 @@ const statefulElements = document.getElementsByClassName(
     selection.addRange(range);
   };
 
+  const makeHandleClick = () => {
+      let isDoubleClick = false;
+      return event => {
+        console.log('this')  
+        console.log(event.target)
+        const timer = setTimeout(() => {
+              !isDoubleClick && event.detail === 1 && toggleFoldedState(event.target);
+              isDouble = false;
+          }, 500)
+          if(event.detail === 2) {
+              isDouble = true;
+              clearTimeout(timer);
+              makeElementEditable(event.target)
+          }
+      }
+  }
+
+  const handleClick = makeHandleClick();
+
   const toggleButtonsVisibilityForElement = element => {
     const buttons = [...element.parentNode.children].filter(element =>
       element.classList.contains('button')
@@ -96,14 +115,14 @@ const statefulElements = document.getElementsByClassName(
   const setupSidebarNavigation = () =>
     [...statefulElements].forEach(
       element =>
-        (element.onclick = () => handleOnClickElement(event.target))
+        (element.onclick = () => handleOnClickElement(event))
     );
 
   setupSidebarNavigation();
-  const handleOnClickElement = element => {
-    setActiveContent(element);
-    setActiveMenuElement(element);
-    toggleFoldedState(element);
+  const handleOnClickElement = event => {
+    setActiveContent(event.target);
+    setActiveMenuElement(event.target);
+    handleClick(event);
   };
 
   const deleteElement = element => {
@@ -152,11 +171,7 @@ const statefulElements = document.getElementsByClassName(
         element.classList.contains('button-add') ||
         element.classList.contains('button-add-child')
     );
-    // const buttonsEditArray = [...buttons].filter(element =>
-    //   element.classList.contains('button-edit')
-    // );
-
-    // makeElementsEditableOnButtonClick(buttonsEditArray);
+    
     buttonsDeleteArray.forEach(
       button => (button.onclick = event => window.confirm('Вы уверены, что хотите удалить элемент?') && deleteElement(event.target))
     );
@@ -215,11 +230,6 @@ const statefulElements = document.getElementsByClassName(
         class: 'button button-delete removable',
         content: '–'
       },
-    //   {
-    //     tag: 'button',
-    //     class: 'button button-edit removable',
-    //     content: '✎'
-    //   },
       {
         tag: 'button',
         class: 'button button-add-child removable',
