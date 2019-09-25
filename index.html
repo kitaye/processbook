@@ -240,16 +240,20 @@
       const makeContentId = id => `${id}_content`;
 
       const toggleFoldedState = element => {
-        if (element.parentNode.childElementCount === 5) {
+        console.log('fdfdfdf');
+        console.log(element.parentNode.childElementCount)
+        if (element.parentNode.childElementCount === 4) {
+          console.log('wtf');
           return;
         }
         if (element.contentEditable === 'true') {
           return;
         }
+        console.log('do me');
         element.classList.toggle('unfolded');
-        element.parentNode.querySelector('list') &&
+        element.parentNode.querySelector('.list') &&
           element.parentNode
-            .querySelector('list')
+            .querySelector('.list')
             .classList.toggle('visually-hidden');
       };
 
