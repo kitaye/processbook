@@ -98,11 +98,9 @@
 
       .button {
         position: absolute;
-        top: 5px;
         width: 15px;
         height: 15px;
         text-align: center;
-        font-size: 17px;
         background-color: inherit;
         padding: 0;
         border: none;
@@ -115,18 +113,26 @@
 
       .button-add {
         left: 0;
+        top: 4px;
+        font-size: 20px;
       }
 
       .button-delete {
         left: 20px;
+        top: 4px;
+        font-size: 20px;
       }
 
       .button-edit {
         left: 40px;
+        top: 7px;
+        font-size: 17px;
       }
 
       .button-add-child {
         right: 10px;
+        top: 4px;
+        font-size: 20px;
       }
 
       .button:active,
@@ -234,16 +240,20 @@
       const makeContentId = id => `${id}_content`;
 
       const toggleFoldedState = element => {
-        if (element.parentNode.childElementCount === 5) {
+        console.log('fdfdfdf');
+        console.log(element.parentNode.childElementCount)
+        if (element.parentNode.childElementCount === 4) {
+          console.log('wtf');
           return;
         }
         if (element.contentEditable === 'true') {
           return;
         }
+        console.log('do me');
         element.classList.toggle('unfolded');
-        element.parentNode.querySelector('list') &&
+        element.parentNode.querySelector('.list') &&
           element.parentNode
-            .querySelector('list')
+            .querySelector('.list')
             .classList.toggle('visually-hidden');
       };
 
