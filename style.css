@@ -71,7 +71,7 @@ body {
 
   .list__item_text:not([contenteditable='true']):hover,
   .list__item_text:not([contenteditable='true']):focus {
-    background-color: lime;
+    background-color: #ffdd2d;
     cursor: default;
   }
 
