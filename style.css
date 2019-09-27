@@ -168,3 +168,10 @@ body {
   .content[contenteditable='true'] {
     outline: none;
   }
+
+  .content__heading {
+    background-color: #f7f7f7;
+    text-align: center;
+    border-radius: 5px;
+    padding: 10px;
+  }

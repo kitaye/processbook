@@ -67,7 +67,7 @@ const statefulElements = document.getElementsByClassName(
           if(event.detail === 2) {
               isDouble = true;
               clearTimeout(timer);
-              makeElementEditable(event.target)
+              editElement(event.target)
           }
       }
   }
@@ -116,11 +116,8 @@ const statefulElements = document.getElementsByClassName(
     const iter = (element, result) => {
         const nextListItem = element.parentNode.parentNode.closest('.list__item');
         const nextHeading = nextListItem && [...nextListItem.children].find(element => element.classList.contains('list__item_text'));
-        // console.log(nextListItem || 'fu');
-        console.log('nextHeading: ' + nextHeading);
         return nextListItem ? iter(nextHeading, [...result, nextHeading]): result;
 };
-// console.log(iter(heading, [heading]));    
 return iter(heading, [heading]);
   }
 
@@ -154,7 +151,7 @@ return iter(heading, [heading]);
     document.getElementById(contentId).remove();
   };
 
-  const makeElementEditable = element => {
+  const editElement = element => {
     const setEditPossibility = isPossible => {
       if (isPossible) {
         element.contentEditable = true;
@@ -165,10 +162,14 @@ return iter(heading, [heading]);
     };
     setEndOfContenteditable(element);
     setEditPossibility(true);
-    element.onblur = () => setEditPossibility(false);
+    element.onblur = () => {
+      setEditPossibility(false);
+      document.querySelector('.content__heading').innerHTML = element.innerHTML;
+    }
     element.onkeydown = event => {
       if (event.keyCode === 13) {
         setEditPossibility(false);
+        document.querySelector('.content__heading').innerHTML = element.innerHTML;
       }
     };
   };
@@ -181,7 +182,7 @@ return iter(heading, [heading]);
     buttons.forEach(
       button =>
         (button.onclick = event =>
-          makeElementEditable(editableElement(event.target)))
+          editElement(editableElement(event.target)))
     );
   };
 
@@ -219,7 +220,7 @@ return iter(heading, [heading]);
           setupSidebarNavigation();
           setActiveContent(newChildren.heading);
           setActiveMenuElement(newChildren.heading);
-          makeElementEditable(newChildren.heading);
+          editElement(newChildren.heading);
         })
     );
   };
