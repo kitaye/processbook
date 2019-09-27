@@ -26,6 +26,8 @@ const statefulElements = document.getElementsByClassName(
   const getMenuElementContentId = menuElement =>
     `${menuElement.parentNode.id}_content`;
 
+    const getContentHeadingId = menuElement => `${menuElement.id}_heading`;
+
   const makeId = makeCounter();
   const makeContentId = id => `${id}_content`;
 
@@ -58,8 +60,6 @@ const statefulElements = document.getElementsByClassName(
   const makeHandleClick = () => {
       let isDoubleClick = false;
       return event => {
-        console.log('this')  
-        console.log(event.target)
         const timer = setTimeout(() => {
               !isDoubleClick && event.detail === 1 && toggleFoldedState(event.target);
               isDouble = false;
@@ -67,7 +67,7 @@ const statefulElements = document.getElementsByClassName(
           if(event.detail === 2) {
               isDouble = true;
               clearTimeout(timer);
-              makeElementEditable(event.target)
+              editElement(event.target)
           }
       }
   }
@@ -90,7 +90,9 @@ const statefulElements = document.getElementsByClassName(
     const activeElement = document.querySelector('.active.list__item_text');
 
     activeElement && activeElement.classList.toggle('active');
+    getHeadingsTree(activeElement) && getHeadingsTree(activeElement).forEach(el => el.classList.toggle('active-predecessor'));
     element.classList.toggle('active');
+    getHeadingsTree(element) && getHeadingsTree(element).forEach(el => el.classList.toggle('active-predecessor'));
     toggleButtonsVisibilityForElement(element);
     activeElement && toggleButtonsVisibilityForElement(activeElement);
   };
@@ -116,27 +118,16 @@ const statefulElements = document.getElementsByClassName(
     const iter = (element, result) => {
         const nextListItem = element.parentNode.parentNode.closest('.list__item');
         const nextHeading = nextListItem && [...nextListItem.children].find(element => element.classList.contains('list__item_text'));
-        // console.log(nextListItem || 'fu');
-        console.log('nextHeading: ' + nextHeading);
         return nextListItem ? iter(nextHeading, [...result, nextHeading]): result;
 };
-// console.log(iter(heading, [heading]));    
-return iter(heading, [heading]);
+return iter(heading, []);
   }
 
 
   const setupSidebarNavigation = () => {
-    console.log([...statefulElements]);
     [...statefulElements].forEach(
       element => {
-          console.log('element ' + element)
           element.addEventListener('click', event => handleOnClickElement(event));
-          element.addEventListener('mouseover', () => {
-              
-            console.log(getHeadingsTree(event.target));
-            getHeadingsTree(event.target).forEach(element => element.classList.add('hover'))
-    });
-        element.addEventListener('mouseout', () => getHeadingsTree(event.target).forEach(element => element.classList.remove('hover')));
       })
   }
   
@@ -154,7 +145,7 @@ return iter(heading, [heading]);
     document.getElementById(contentId).remove();
   };
 
-  const makeElementEditable = element => {
+  const editElement = element => {
     const setEditPossibility = isPossible => {
       if (isPossible) {
         element.contentEditable = true;
@@ -165,10 +156,14 @@ return iter(heading, [heading]);
     };
     setEndOfContenteditable(element);
     setEditPossibility(true);
-    element.onblur = () => setEditPossibility(false);
+    element.onblur = () => {
+      setEditPossibility(false);
+      document.getElementById(getContentHeadingId(element.parentNode)).innerHTML = element.innerHTML;
+    }
     element.onkeydown = event => {
       if (event.keyCode === 13) {
         setEditPossibility(false);
+        document.getElementById(getContentHeadingId(element.parentNode)).innerHTML = element.innerHTML;
       }
     };
   };
@@ -181,7 +176,7 @@ return iter(heading, [heading]);
     buttons.forEach(
       button =>
         (button.onclick = event =>
-          makeElementEditable(editableElement(event.target)))
+          editElement(editableElement(event.target)))
     );
   };
 
@@ -219,7 +214,7 @@ return iter(heading, [heading]);
           setupSidebarNavigation();
           setActiveContent(newChildren.heading);
           setActiveMenuElement(newChildren.heading);
-          makeElementEditable(newChildren.heading);
+          editElement(newChildren.heading);
         })
     );
   };
@@ -321,6 +316,10 @@ return iter(heading, [heading]);
     const newElement = document.createElement('div');
     newElement.classList.add('content');
     newElement.setAttribute('id', `${menuElement.id}_content`);
+    const heading = document.createElement('h3');
+    heading.classList.add('content__heading');
+    heading.setAttribute('id', getContentHeadingId(menuElement));
+    newElement.appendChild(heading);
     return newElement;
   };
 
