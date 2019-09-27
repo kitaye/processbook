@@ -68,9 +68,8 @@ body {
     padding: 5px 30px 5px 60px;
     border-radius: 5px;
   }
-
-  .list__item_text:not([contenteditable='true']):hover,
-  .list__item_text:not([contenteditable='true']):focus {
+ 
+    .hover {
     background-color: #ffdd2d;
     cursor: default;
   }

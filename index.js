@@ -112,13 +112,36 @@ const statefulElements = document.getElementsByClassName(
       currentMenuElementContent.classList.remove('visually-hidden');
   };
 
-  const setupSidebarNavigation = () =>
-    [...statefulElements].forEach(
-      element =>
-        (element.onclick = () => handleOnClickElement(event))
-    );
+  const getHeadingsTree = heading => {
+    const iter = (element, result) => {
+        const nextListItem = element.parentNode.parentNode.closest('.list__item');
+        const nextHeading = nextListItem && [...nextListItem.children].find(element => element.classList.contains('list__item_text'));
+        // console.log(nextListItem || 'fu');
+        console.log('nextHeading: ' + nextHeading);
+        return nextListItem ? iter(nextHeading, [...result, nextHeading]): result;
+};
+// console.log(iter(heading, [heading]));    
+return iter(heading, [heading]);
+  }
 
-  setupSidebarNavigation();
+
+  const setupSidebarNavigation = () => {
+    console.log([...statefulElements]);
+    [...statefulElements].forEach(
+      element => {
+          console.log('element ' + element)
+          element.addEventListener('click', event => handleOnClickElement(event));
+          element.addEventListener('mouseover', () => {
+              
+            console.log(getHeadingsTree(event.target));
+            getHeadingsTree(event.target).forEach(element => element.classList.add('hover'))
+    });
+        element.addEventListener('mouseout', () => getHeadingsTree(event.target).forEach(element => element.classList.remove('hover')));
+      })
+  }
+  
+    setupSidebarNavigation();
+
   const handleOnClickElement = event => {
     setActiveContent(event.target);
     setActiveMenuElement(event.target);
@@ -348,6 +371,4 @@ const statefulElements = document.getElementsByClassName(
       encodeURIComponent(clone.innerHTML);
   };
 
-  const getHigherLevelHeadings = heading => {
-    const iter = (element, result) => element.classList.contains('aside') ? result: iter(element.closest('.list__item'), [...result, element])
-  }
+  
