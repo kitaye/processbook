@@ -26,6 +26,8 @@ const statefulElements = document.getElementsByClassName(
   const getMenuElementContentId = menuElement =>
     `${menuElement.parentNode.id}_content`;
 
+    const getContentHeadingId = menuElement => `${menuElement.id}_heading`;
+
   const makeId = makeCounter();
   const makeContentId = id => `${id}_content`;
 
@@ -164,12 +166,13 @@ return iter(heading, [heading]);
     setEditPossibility(true);
     element.onblur = () => {
       setEditPossibility(false);
-      document.querySelector('.content__heading').innerHTML = element.innerHTML;
+      document.getElementById(getContentHeadingId(element)).innerHTML = element.innerHTML;
     }
     element.onkeydown = event => {
       if (event.keyCode === 13) {
         setEditPossibility(false);
-        document.querySelector('.content__heading').innerHTML = element.innerHTML;
+        console.log(getContentHeadingId(element.parentNode));
+        document.getElementById(getContentHeadingId(element.parentNode)).innerHTML = element.innerHTML;
       }
     };
   };
@@ -322,6 +325,12 @@ return iter(heading, [heading]);
     const newElement = document.createElement('div');
     newElement.classList.add('content');
     newElement.setAttribute('id', `${menuElement.id}_content`);
+    const heading = document.createElement('h3');
+    heading.classList.add('content__heading');
+    heading.setAttribute('id', getContentHeadingId(menuElement));
+    console.log(heading.id);
+    console.log(menuElement.id);
+    newElement.appendChild(heading);
     return newElement;
   };
 
