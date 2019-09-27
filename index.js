@@ -60,8 +60,6 @@ const statefulElements = document.getElementsByClassName(
   const makeHandleClick = () => {
       let isDoubleClick = false;
       return event => {
-        console.log('this')  
-        console.log(event.target)
         const timer = setTimeout(() => {
               !isDoubleClick && event.detail === 1 && toggleFoldedState(event.target);
               isDouble = false;
@@ -92,7 +90,9 @@ const statefulElements = document.getElementsByClassName(
     const activeElement = document.querySelector('.active.list__item_text');
 
     activeElement && activeElement.classList.toggle('active');
+    getHeadingsTree(activeElement) && getHeadingsTree(activeElement).forEach(el => el.classList.toggle('active-predecessor'));
     element.classList.toggle('active');
+    getHeadingsTree(element) && getHeadingsTree(element).forEach(el => el.classList.toggle('active-predecessor'));
     toggleButtonsVisibilityForElement(element);
     activeElement && toggleButtonsVisibilityForElement(activeElement);
   };
@@ -120,22 +120,14 @@ const statefulElements = document.getElementsByClassName(
         const nextHeading = nextListItem && [...nextListItem.children].find(element => element.classList.contains('list__item_text'));
         return nextListItem ? iter(nextHeading, [...result, nextHeading]): result;
 };
-return iter(heading, [heading]);
+return iter(heading, []);
   }
 
 
   const setupSidebarNavigation = () => {
-    console.log([...statefulElements]);
     [...statefulElements].forEach(
       element => {
-          console.log('element ' + element)
           element.addEventListener('click', event => handleOnClickElement(event));
-          element.addEventListener('mouseover', () => {
-              
-            console.log(getHeadingsTree(event.target));
-            getHeadingsTree(event.target).forEach(element => element.classList.add('hover'))
-    });
-        element.addEventListener('mouseout', () => getHeadingsTree(event.target).forEach(element => element.classList.remove('hover')));
       })
   }
   
@@ -166,12 +158,11 @@ return iter(heading, [heading]);
     setEditPossibility(true);
     element.onblur = () => {
       setEditPossibility(false);
-      document.getElementById(getContentHeadingId(element)).innerHTML = element.innerHTML;
+      document.getElementById(getContentHeadingId(element.parentNode)).innerHTML = element.innerHTML;
     }
     element.onkeydown = event => {
       if (event.keyCode === 13) {
         setEditPossibility(false);
-        console.log(getContentHeadingId(element.parentNode));
         document.getElementById(getContentHeadingId(element.parentNode)).innerHTML = element.innerHTML;
       }
     };
@@ -328,8 +319,6 @@ return iter(heading, [heading]);
     const heading = document.createElement('h3');
     heading.classList.add('content__heading');
     heading.setAttribute('id', getContentHeadingId(menuElement));
-    console.log(heading.id);
-    console.log(menuElement.id);
     newElement.appendChild(heading);
     return newElement;
   };
