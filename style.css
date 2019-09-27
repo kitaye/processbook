@@ -168,7 +168,6 @@ body {
   .content[contenteditable='true'] {
     outline: none;
   }
-<<<<<<< HEAD
 
   .content__heading {
     background-color: #f7f7f7;
@@ -177,5 +176,3 @@ body {
     padding: 10px;
     margin-top: 0;
   }
-=======
->>>>>>> f7c958b87f2c4fe642eb3e99cb29bf3a2aa57c11
