@@ -95,7 +95,7 @@ body {
     border: 1px solid #ffdd2d;
   }
 
-  .visually-hidden {
+  .hidden {
     display: none;
   }
 
@@ -106,6 +106,7 @@ body {
     background-color: inherit;
     padding: 0;
     border: none;
+    font-size: 20px;
   }
 
   .button:hover,
@@ -116,20 +117,21 @@ body {
   .button-add {
     left: 15px;
     top: 3px;
-    font-size: 20px;
   }
 
   .button-delete {
     left: 35px;
     top: 3px;
-    font-size: 20px;
   }
 
 
   .button-add-child {
     right: 15px;
     top: 3px;
-    font-size: 20px;
+  }
+
+  .root {
+    top: 5px;
   }
 
   .button:active,
@@ -176,3 +178,8 @@ body {
     padding: 10px;
     margin-top: 0;
   }
+
+  .wrapper {
+    position: relative;
+  }
+  

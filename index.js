@@ -8,7 +8,7 @@ const statefulElements = document.getElementsByClassName(
       .map(element => element.tagName.toLowerCase())
       .includes(tag);
 
-  const siblingsArray = element => [...element.parentNode.children];
+  const siblingsArray = element => [...element.parentNode.children].filter(node => node != element);
 
   const maxId = [...statefulElements].reduce(
     (acc, current) =>
@@ -24,7 +24,7 @@ const statefulElements = document.getElementsByClassName(
   };
 
   const getMenuElementContentId = menuElement =>
-    `${menuElement.parentNode.id}_content`;
+    `${menuElement.closest('.list__item').id}_content`;
 
     const getContentHeadingId = menuElement => `${menuElement.id}_heading`;
 
@@ -42,7 +42,7 @@ const statefulElements = document.getElementsByClassName(
     element.parentNode.querySelector('.list') &&
       element.parentNode
         .querySelector('.list')
-        .classList.toggle('visually-hidden');
+        .classList.toggle('hidden');
   };
 
   const setEndOfContenteditable = contentEditableElement => {
@@ -81,8 +81,8 @@ const statefulElements = document.getElementsByClassName(
     const isActive = element.classList.contains('active');
     buttons.forEach(button =>
       isActive
-        ? button.classList.remove('visually-hidden')
-        : button.classList.add('visually-hidden')
+        ? button.classList.remove('hidden')
+        : button.classList.add('hidden')
     );
   };
 
@@ -90,7 +90,7 @@ const statefulElements = document.getElementsByClassName(
     const activeElement = document.querySelector('.active.list__item_text');
 
     activeElement && activeElement.classList.toggle('active');
-    getHeadingsTree(activeElement) && getHeadingsTree(activeElement).forEach(el => el.classList.toggle('active-predecessor'));
+    activeElement && getHeadingsTree(activeElement) && getHeadingsTree(activeElement).forEach(el => el.classList.toggle('active-predecessor'));
     element.classList.toggle('active');
     getHeadingsTree(element) && getHeadingsTree(element).forEach(el => el.classList.toggle('active-predecessor'));
     toggleButtonsVisibilityForElement(element);
@@ -109,9 +109,9 @@ const statefulElements = document.getElementsByClassName(
     );
 
     activeMenuElement &&
-      activeMenuElementContent.classList.add('visually-hidden');
+      activeMenuElementContent.classList.add('hidden');
     activeMenuElementContent &&
-      currentMenuElementContent.classList.remove('visually-hidden');
+      currentMenuElementContent.classList.remove('hidden');
   };
 
   const getHeadingsTree = heading => {
@@ -168,17 +168,18 @@ return iter(heading, []);
     };
   };
 
-  const makeElementsEditableOnButtonClick = buttons => {
-    const editableElement = button =>
-      siblingsArray(button).find(element =>
-        element.classList.contains('editable')
-      );
-    buttons.forEach(
-      button =>
-        (button.onclick = event =>
-          editElement(editableElement(event.target)))
-    );
-  };
+  // const makeElementsEditableOnButtonClick = buttons => {
+  //   const editableElement = button =>
+  //     siblingsArray(button).find(element =>
+  //       element.classList.contains('editable')
+  //     );
+  //       console.log(siblingArray(button));
+  //   buttons.forEach(
+  //     button =>
+  //       (button.onclick = event =>
+  //         editElement(editableElement(event.target)))
+  //   );
+  // };
 
   const setButtonsOnClickEvents = () => {
     const buttonsDeleteArray = [...buttons].filter(element =>
@@ -333,7 +334,7 @@ return iter(heading, []);
   editContent = () => {
     const visibleContent = [
       ...document.getElementsByClassName('content')
-    ].find(element => !element.classList.contains('visually-hidden'));
+    ].find(element => !element.classList.contains('hidden'));
     if (visibleContent) {
       visibleContent.contentEditable = 'true';
     }
