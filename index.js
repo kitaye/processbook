@@ -5,14 +5,11 @@ const getSameLevelList = element => [...getHigherLevelListItem(element).children
 const statefulElements = document.getElementsByClassName(
     'list__item_text'
   );
-  // const editableElements = document.getElementsByClassName('editable');
   const buttons = document.getElementsByClassName('button');
   const hasTagChildren = (element, tag) =>
     [...element.children]
       .map(element => element.tagName.toLowerCase())
       .includes(tag);
-
-  // const siblingsArray = element => [...element.parentNode.children].filter(node => node != element);
 
   const maxId = [...statefulElements].reduce(
     (acc, current) => {
@@ -24,7 +21,7 @@ const statefulElements = document.getElementsByClassName(
   );
 
   const makeCounter = () => {
-    let counter = maxId;
+    let counter = maxId + 1;
     return () => (counter = Number(counter) + 1);
   };
 
@@ -35,9 +32,6 @@ const statefulElements = document.getElementsByClassName(
     const getContentHeadingId = menuElement => `${menuElement.id}_heading`;
 
   const makeId = makeCounter();
-  console.log(maxId);
-  console.log(makeId());
-  console.log(makeId());
 
   const toggleFoldedState = element => {
     if (![...getHigherLevelListItem(element).children].map(( { tagName }) => tagName).includes('OL')) {
@@ -46,7 +40,6 @@ const statefulElements = document.getElementsByClassName(
     if (element.contentEditable === 'true') {
       return;
     }
-    console.log(getSameLevelList(element));
     getSameLevelList(element) &&
       getSameLevelList(element).classList.toggle('hidden');
   };
@@ -203,7 +196,6 @@ return iter(heading, []);
           appendNewElement(parent, newChildren);
           const newContent = makeContent(newChildren.li);
           appendContent(newContent);
-          // const heading = document.querySelector(`#${CSS.escape(parent.id)} .wrapper .list__item_text`);
           const heading = document.querySelector('.active');
           heading &&
             heading.classList.contains('unfolded') &&
@@ -339,7 +331,6 @@ return iter(heading, []);
     }
     
     const headingId = `${visibleContent.id.slice(0,1)}_heading`;
-    console.log(headingId);
     document.getElementById(headingId).contentEditable = false;
     setEndOfContenteditable(visibleContent);
     visibleContent.focus();
