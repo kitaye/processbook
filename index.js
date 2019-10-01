@@ -1,20 +1,25 @@
+const getHigherLevelListItem = element => element.parentNode.closest('.list__item');
+const getSameLevelList = element => [...getHigherLevelListItem(element).children].find(element => element.classList.contains('list'));
+
+
 const statefulElements = document.getElementsByClassName(
     'list__item_text'
   );
-  const editableElements = document.getElementsByClassName('editable');
+  // const editableElements = document.getElementsByClassName('editable');
   const buttons = document.getElementsByClassName('button');
   const hasTagChildren = (element, tag) =>
     [...element.children]
       .map(element => element.tagName.toLowerCase())
       .includes(tag);
 
-  const siblingsArray = element => [...element.parentNode.children].filter(node => node != element);
+  // const siblingsArray = element => [...element.parentNode.children].filter(node => node != element);
 
   const maxId = [...statefulElements].reduce(
-    (acc, current) =>
-      Number(current.parentNode.id) > acc
+    (acc, current) => {
+      return Number(getHigherLevelListItem(current).id) > acc
         ? Number(current.parentNode.id)
-        : acc,
+        : acc
+      },
     0
   );
 
@@ -23,26 +28,27 @@ const statefulElements = document.getElementsByClassName(
     return () => (counter = Number(counter) + 1);
   };
 
-  const getMenuElementContentId = menuElement =>
-    `${menuElement.closest('.list__item').id}_content`;
+  const getMenuElementContentId = menuElement => {
+    return `${menuElement.closest('.list__item').id}_content`;
+  }
 
     const getContentHeadingId = menuElement => `${menuElement.id}_heading`;
 
   const makeId = makeCounter();
-  const makeContentId = id => `${id}_content`;
+  console.log(maxId);
+  console.log(makeId());
+  console.log(makeId());
 
   const toggleFoldedState = element => {
-    if (![...element.parentNode.children].map(( { tagName }) => tagName).includes('OL')) {
+    if (![...getHigherLevelListItem(element).children].map(( { tagName }) => tagName).includes('OL')) {
       return;
     }
     if (element.contentEditable === 'true') {
       return;
     }
-    element.classList.toggle('unfolded');
-    element.parentNode.querySelector('.list') &&
-      element.parentNode
-        .querySelector('.list')
-        .classList.toggle('hidden');
+    console.log(getSameLevelList(element));
+    getSameLevelList(element) &&
+      getSameLevelList(element).classList.toggle('hidden');
   };
 
   const setEndOfContenteditable = contentEditableElement => {
@@ -116,8 +122,8 @@ const statefulElements = document.getElementsByClassName(
 
   const getHeadingsTree = heading => {
     const iter = (element, result) => {
-        const nextListItem = element.parentNode.parentNode.closest('.list__item');
-        const nextHeading = nextListItem && [...nextListItem.children].find(element => element.classList.contains('list__item_text'));
+        const nextListItem = element.closest('.list__item').parentNode.closest('.list__item');
+        const nextHeading = nextListItem && document.querySelector(`#${CSS.escape(nextListItem.id)} .wrapper .list__item_text`);
         return nextListItem ? iter(nextHeading, [...result, nextHeading]): result;
 };
 return iter(heading, []);
@@ -139,10 +145,14 @@ return iter(heading, []);
     handleClick(event);
   };
 
+  
   const deleteElement = element => {
-    contentId = `${element.parentNode.id}_content`;
-    element.parentNode.remove();
+    const contentId = `${element.closest('.list__item').id}_content`;
+    getHigherLevelListItem(element).remove();
     document.getElementById(contentId).remove();
+    const mainHeading = document.querySelector(`#${CSS.escape(1)} .wrapper .list__item_text`)
+    setActiveMenuElement(mainHeading);
+    setActiveContent(mainHeading);
   };
 
   const editElement = element => {
@@ -158,28 +168,15 @@ return iter(heading, []);
     setEditPossibility(true);
     element.onblur = () => {
       setEditPossibility(false);
-      document.getElementById(getContentHeadingId(element.parentNode)).innerHTML = element.innerHTML;
+      document.getElementById(getContentHeadingId(element.closest('.list__item'))).innerHTML = element.innerHTML;
     }
     element.onkeydown = event => {
       if (event.keyCode === 13) {
         setEditPossibility(false);
-        document.getElementById(getContentHeadingId(element.parentNode)).innerHTML = element.innerHTML;
+        document.getElementById(getContentHeadingId(element.closest('.list__item'))).innerHTML = element.innerHTML;
       }
     };
   };
-
-  // const makeElementsEditableOnButtonClick = buttons => {
-  //   const editableElement = button =>
-  //     siblingsArray(button).find(element =>
-  //       element.classList.contains('editable')
-  //     );
-  //       console.log(siblingArray(button));
-  //   buttons.forEach(
-  //     button =>
-  //       (button.onclick = event =>
-  //         editElement(editableElement(event.target)))
-  //   );
-  // };
 
   const setButtonsOnClickEvents = () => {
     const buttonsDeleteArray = [...buttons].filter(element =>
@@ -200,19 +197,18 @@ return iter(heading, []);
         (button.onclick = event => {
           const isAppendingChild = event.target.classList.contains('button-add-child');
           const parent = isAppendingChild
-            ? event.target.parentNode
-            : event.target.parentNode.parentNode.parentNode;
+            ? event.target.closest('.list__item')
+            : event.target.closest('.list').parentNode;
           const newChildren = makeMenuElement(parent);
-          const heading = [...parent.children].find(element =>
-            element.classList.contains('list__item_text')
-          );
           appendNewElement(parent, newChildren);
           const newContent = makeContent(newChildren.li);
           appendContent(newContent);
+          // const heading = document.querySelector(`#${CSS.escape(parent.id)} .wrapper .list__item_text`);
+          const heading = document.querySelector('.active');
           heading &&
             heading.classList.contains('unfolded') &&
             toggleFoldedState(heading);
-          setupSidebarNavigation();
+          newChildren.heading.addEventListener('click', event => handleOnClickElement(event));
           setActiveContent(newChildren.heading);
           setActiveMenuElement(newChildren.heading);
           editElement(newChildren.heading);
@@ -297,17 +293,20 @@ return iter(heading, []);
     };
   };
 
-  const appendNewElement = (parent, newChildren) => {
-    const existingOl = [...parent.children].find(child =>
+  const appendNewElement = (listItem, newChildren) => {
+    const existingOl = [...listItem.children].find(child =>
       child.classList.contains('list')
     );
-    const ol = hasTagChildren(parent, 'ol') ? existingOl : newChildren.ol;
+    const newWrapper = document.createElement('div');
+    newWrapper.setAttribute('class', 'wrapper');
+    const ol = hasTagChildren(listItem, 'ol') ? existingOl : newChildren.ol;
     const li = ol.appendChild(newChildren.li);
-    newChildren.buttons.forEach(button => li.appendChild(button));
-    li.appendChild(newChildren.heading);
+    const wrapper = li.appendChild(newWrapper);
+    newChildren.buttons.forEach(button => wrapper.appendChild(button));
+    wrapper.appendChild(newChildren.heading);
     ol.appendChild(li);
-    if (!hasTagChildren(parent, 'ol')) {
-      parent.appendChild(ol);
+    if (!hasTagChildren(listItem, 'ol')) {
+      listItem.appendChild(ol);
     }
     setButtonsOnClickEvents();
     newChildren.heading.focus();
@@ -338,6 +337,10 @@ return iter(heading, []);
     if (visibleContent) {
       visibleContent.contentEditable = 'true';
     }
+    
+    const headingId = `${visibleContent.id.slice(0,1)}_heading`;
+    console.log(headingId);
+    document.getElementById(headingId).contentEditable = false;
     setEndOfContenteditable(visibleContent);
     visibleContent.focus();
     visibleContent.addEventListener(

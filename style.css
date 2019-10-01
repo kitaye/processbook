@@ -101,6 +101,8 @@ body {
 
   .button {
     position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     width: 15px;
     text-align: center;
     background-color: inherit;
@@ -116,22 +118,15 @@ body {
 
   .button-add {
     left: 15px;
-    top: 3px;
   }
 
   .button-delete {
     left: 35px;
-    top: 3px;
   }
 
 
   .button-add-child {
     right: 15px;
-    top: 3px;
-  }
-
-  .root {
-    top: 5px;
   }
 
   .button:active,
@@ -182,4 +177,6 @@ body {
   .wrapper {
     position: relative;
   }
+
+  
   
